@@ -1,0 +1,28 @@
+{
+    "Current Classes": [
+        {
+            "Class": "Professional and Technical Writing",
+            "Time": "5:30 PM",
+            "Days": ["Monday", "Wednesday"],
+            "Location": "TLC room 1109"
+        },
+        {
+            "Class": "Machine Learning Foundations",
+            "Time": "2:00 PM",
+            "Days": ["Tuesday", "Thursday"],
+            "Location": "TLC room 1210"
+        },
+        {
+            "Class": "Software Engineering I",
+            "Time": "12:30 AM",
+            "Days": ["Tuesday", "Thursday"],
+            "Location": "TLC room 1116" 
+        },
+        {
+            "Class": "Data Structures and Discrete Mathematics II",
+            "Time": "9:30 AM",
+            "Days": ["Tuesday", "Thursday"],
+            "Location": "TLC room 1210" 
+        }
+    ]
+}

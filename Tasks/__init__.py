@@ -409,7 +409,7 @@ def chat(start, people):
                         if name in people:
 
                             try:
-                                list_classes = json.load(open(PATH + "/" + name + "/Current.json"))
+                                list_classes = json.load(open(PATH + "/" + name + "/classes.json"))
                             except:
                                 string_response = "I do not have any classes for you"
                                 continue
@@ -467,7 +467,7 @@ def chat(start, people):
                         if name in people:
 
                             try:
-                                list_classes = json.load(open(PATH + "/" + name + "/Current.json"))
+                                list_classes = json.load(open(PATH + "/" + name + "/classes.json"))
                             except:
                                 string_response = "I do not have any classes for you"
                                 continue
@@ -524,7 +524,7 @@ def chat(start, people):
                         if name in people:
 
                             try:
-                                list_classes = json.load(open(PATH + "/" + name + "/Current.json"))
+                                list_classes = json.load(open(PATH + "/" + name + "/classes.json"))
                             except:
                                 string_response = "I do not have any classes for you"
                                 continue
