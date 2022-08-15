@@ -6,6 +6,7 @@ Wolfie is a personal AI system designed for use around the West Georgia campus t
 - Oriented
 - Looped
 - Faculty
+- Interface
 - Experience
 
 ## To code after cloning ([VS Code](https://code.visualstudio.com/)):
