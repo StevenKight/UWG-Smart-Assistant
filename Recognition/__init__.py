@@ -29,7 +29,6 @@ from datetime import datetime
 import numpy as np
 import cv2
 
-sys.path.append('Recognition')
 import encoder
 
 __author__ = "Steven Kight"
