@@ -65,6 +65,32 @@ def new_person(name, image="", voice=""):
         shutil.move(voice, new_dir + "/Voice" + voice)
 
 
+def new_directory(dir_name):
+    """
+    Creates a new Directory called the inputed value
+    for every person in Dataset/
+
+    :param dir_name: A String name for the newly created directory.
+    """
+
+    cur_direc = os.getcwd()
+    path = os.path.join(cur_direc, 'Dataset/')
+
+    # Folders must be named after person
+    list_of_folders = next(os.walk(path))[1]
+
+    # Folder names are listed and assigned to “names” variable.
+    names = list_of_folders.copy()
+
+    # go through all the directorys name by name
+    for name in names:
+        dir_path = path + name + "/" + dir_name
+
+        # check if directory exists or not yet
+        if not os.path.exists(dir_path):
+            os.makedirs(dir_path)
+            
+
 if __name__ == "__main__":
     print("Modifying Dataset")
 

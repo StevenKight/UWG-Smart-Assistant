@@ -7,13 +7,13 @@ import Recognition
 
 if __name__ == "__main__":
     # Special Check for presentation
-    PRESENTATION = input("Presentation? (y or n) ")
+    camera = input("camera? (y or n) ")
 
-    if PRESENTATION == "y":
-        PRESENTATION = True
-    elif PRESENTATION == "n":
-        PRESENTATION = False
-    if PRESENTATION:
+    if camera == "n":
+        camera = False
+    camera = True
+    
+    if not camera:
         people = ["Steven Kight"]
     else:
         people = Recognition.recognize_person()
