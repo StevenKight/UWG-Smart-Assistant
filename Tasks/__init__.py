@@ -29,9 +29,9 @@ from playsound import playsound
 from gtts import gTTS
 import speech_recognition as sr
 
-sys.path.append('Tasks')
-import bot_math
-from UWG import events
+import Tasks.bot_math as bot_math
+from Tasks.UWG import events
+import Tasks.interface as interface
 
 __author__ = "Steven Kight"
 __version__ = "2.0"
@@ -170,447 +170,470 @@ def listening():
     return text
 
 
-def chat(start, people):
+def tasks(inp, people, language):
     """
-    Defining of the loop for getting input, predicting and saying answer
-    until users says goodbye or quit.
+    Main tasks to be completed using the inputed sentence.
 
-    :param start: The first thing the user said for startup sequence.
-    :param people: list of people in the initial image (used for personalized questions)
+    :param inp: The inputed sentence to be processed
+    :param people: The people saying the inputed sentence
+    :param language: The language in which to respond
     """
+    if "quit" in inp.lower():
+        quit()
 
-    language = 'en'
+    if inp != '':
+        tag = chatbot_response(inp)[0]
 
-    start_tag = chatbot_response(start)[0]
+    if tag == "goodbye":
+        list_of_intents = INTENTS['intents']
 
-    if start_tag == 'greeting':
-        # Possibly structure a specialized name introduction
-        introduction = ""
+        for i in list_of_intents:
+            if i['tag'] == tag:
+                response = random.choice(i['responses'])
 
-        if any("Unknown" in element for element in people):
-            introduction = random.choice(i['responses']).format("")
-        else:
-            for place in range(len(people)):
-                # Write a function to get the names of people and use mr and mrs
-                # using an information.json file
+                myobj = gTTS(text=response, lang=language, slow=False)
+                myobj.save("Voice.mp3")
+                playsound("Voice.mp3")
+                break
 
-                if " " in people[place]:
-                    first_name = people[place].split(" ")[0]
-                else:
-                    first_name = people[place]
+        return response, True
 
-                if place == 0:
-                    names = first_name
-                elif place > 0:
-                    names += " and " + first_name
+    if tag == "time":
+        list_of_intents = INTENTS['intents']
 
-            list_of_intents = INTENTS['intents']
-            for i in list_of_intents:
-                if i['tag'] == "greeting":
-                    introduction = random.choice(i['responses']).format(names)
+        for i in list_of_intents:
+            if i['tag'] == tag:
+                string_response = random.choice(i['responses'])
 
-            myobj = gTTS(text=introduction, lang=language, slow=False)
-            myobj.save("Voice.mp3")
-            playsound("Voice.mp3")
+                response = string_response + str(time.strftime("%I:%M %p", time.localtime()))
 
-    while True:
+                myobj = gTTS(text=response, lang=language, slow=False)
+                myobj.save("Voice.mp3")
+                playsound("Voice.mp3")
 
-        if start_tag == 'greeting':
-            start_tag = ''
-            start = ''
-            inp = listening()
-        else:
-            if start != '':
-                inp = start
-                start = ''
-            else:
-                inp = listening()
+                return response, False
 
-        print("WAIT")
+    elif tag == "date":
+        list_of_intents = INTENTS['intents']
 
-        if "quit" in inp.lower():
-            break
+        for i in list_of_intents:
+            if i['tag'] == tag:
+                string_response = random.choice(i['responses'])
 
-        if inp != '':
-            tag = chatbot_response(inp)[0]
+                response = string_response + str(datetime.today().strftime('%Y-%m-%d'))
 
-        if tag == "goodbye":
-            list_of_intents = INTENTS['intents']
+                myobj = gTTS(text=response, lang=language, slow=False)
+                myobj.save("Voice.mp3")
+                playsound("Voice.mp3")
 
-            for i in list_of_intents:
-                if i['tag'] == tag:
-                    response = random.choice(i['responses'])
+                return response, False
 
-                    myobj = gTTS(text=response, lang=language, slow=False)
-                    myobj.save("Voice.mp3")
-                    playsound("Voice.mp3")
-                    break
+    elif tag == "addition":
+        numbers = []
+        for word in inp.split():
+            if word.isdigit():
+                numbers.append(int(word))
 
-            break
+        list_of_intents = INTENTS['intents']
 
-        if tag == "time":
-            list_of_intents = INTENTS['intents']
+        for i in list_of_intents:
+            if i['tag'] == tag:
+                string_response = random.choice(i['responses'])
 
-            for i in list_of_intents:
-                if i['tag'] == tag:
-                    string_response = random.choice(i['responses'])
+                response = string_response + str(bot_math.addlist(numbers))
 
-                    response = string_response + str(time.strftime("%I:%M %p", time.localtime()))
+                myobj = gTTS(text=response, lang=language, slow=False)
+                myobj.save("Voice.mp3")
+                playsound("Voice.mp3")
 
-                    myobj = gTTS(text=response, lang=language, slow=False)
-                    myobj.save("Voice.mp3")
-                    playsound("Voice.mp3")
+                return response, False
 
-        elif tag == "date":
-            list_of_intents = INTENTS['intents']
+    elif tag == "multiplication":
+        numbers = []
+        for word in inp.split():
+            if word.isdigit():
+                numbers.append(int(word))
 
-            for i in list_of_intents:
-                if i['tag'] == tag:
-                    string_response = random.choice(i['responses'])
+        list_of_intents = INTENTS['intents']
 
-                    response = string_response + str(datetime.today().strftime('%Y-%m-%d'))
+        for i in list_of_intents:
+            if i['tag'] == tag:
+                string_response = random.choice(i['responses'])
 
-                    myobj = gTTS(text=response, lang=language, slow=False)
-                    myobj.save("Voice.mp3")
-                    playsound("Voice.mp3")
+                response = string_response + str(bot_math.multiplylist(numbers))
 
-        elif tag == "addition":
+                myobj = gTTS(text=response, lang=language, slow=False)
+                myobj.save("Voice.mp3")
+                playsound("Voice.mp3")
+
+                return response, False
+
+    elif tag == "subtraction":
+        numbers = []
+        for word in inp.split():
+            if word.isdigit():
+                numbers.append(int(word))
+
+        list_of_intents = INTENTS['intents']
+
+        for i in list_of_intents:
+            if i['tag'] == tag:
+                string_response = random.choice(i['responses'])
+
+                response = string_response + str(bot_math.subtractlist(numbers))
+
+                myobj = gTTS(text=response, lang=language, slow=False)
+                myobj.save("Voice.mp3")
+                playsound("Voice.mp3")
+
+                return response, False
+
+    elif tag == "division":
+        numbers = []
+        for word in inp.split():
+            if word.isdigit():
+                numbers.append(int(word))
+
+        list_of_intents = INTENTS['intents']
+
+        for i in list_of_intents:
+            if i['tag'] == tag:
+                string_response = random.choice(i['responses'])
+
+                response = string_response + str(bot_math.dividelist(numbers))
+
+                myobj = gTTS(text=response, lang=language, slow=False)
+                myobj.save("Voice.mp3")
+                playsound("Voice.mp3")
+
+                return response, False
+
+    elif tag == "spelling":
+        list_of_words = inp.split()
+        next_word = list_of_words[list_of_words.index("spell") + 1]
+
+        def split(sent):
+            return [char for char in sent]
+
+        response = str(next_word) + "   " + str(split(next_word))
+
+        myobj = gTTS(text=response, lang=language, slow=False)
+        myobj.save("Voice.mp3")
+        playsound("Voice.mp3")
+
+    elif tag == "areofcircle":
+        if "radius" in inp:
             numbers = []
             for word in inp.split():
                 if word.isdigit():
                     numbers.append(int(word))
 
-            list_of_intents = INTENTS['intents']
-
-            for i in list_of_intents:
-                if i['tag'] == tag:
-                    string_response = random.choice(i['responses'])
-
-                    response = string_response + str(bot_math.addlist(numbers))
-
-                    myobj = gTTS(text=response, lang=language, slow=False)
-                    myobj.save("Voice.mp3")
-                    playsound("Voice.mp3")
-
-        elif tag == "multiplication":
-            numbers = []
-            for word in inp.split():
-                if word.isdigit():
-                    numbers.append(int(word))
-
-            list_of_intents = INTENTS['intents']
-
-            for i in list_of_intents:
-                if i['tag'] == tag:
-                    string_response = random.choice(i['responses'])
-
-                    response = string_response + str(bot_math.multiplylist(numbers))
-
-                    myobj = gTTS(text=response, lang=language, slow=False)
-                    myobj.save("Voice.mp3")
-                    playsound("Voice.mp3")
-
-        elif tag == "subtraction":
-            numbers = []
-            for word in inp.split():
-                if word.isdigit():
-                    numbers.append(int(word))
-
-            list_of_intents = INTENTS['intents']
-
-            for i in list_of_intents:
-                if i['tag'] == tag:
-                    string_response = random.choice(i['responses'])
-
-                    response = string_response + str(bot_math.subtractlist(numbers))
-
-                    myobj = gTTS(text=response, lang=language, slow=False)
-                    myobj.save("Voice.mp3")
-                    playsound("Voice.mp3")
-
-        elif tag == "division":
-            numbers = []
-            for word in inp.split():
-                if word.isdigit():
-                    numbers.append(int(word))
-
-            list_of_intents = INTENTS['intents']
-
-            for i in list_of_intents:
-                if i['tag'] == tag:
-                    string_response = random.choice(i['responses'])
-
-                    response = string_response + str(bot_math.dividelist(numbers))
-
-                    myobj = gTTS(text=response, lang=language, slow=False)
-                    myobj.save("Voice.mp3")
-                    playsound("Voice.mp3")
-
-        elif tag == "spelling":
-            list_of_words = inp.split()
-            next_word = list_of_words[list_of_words.index("spell") + 1]
-
-            def split(sent):
-                return [char for char in sent]
-
-            response = str(next_word) + "   " + str(split(next_word))
+            response = bot_math.areaofcircle(int(numbers[0]))
 
             myobj = gTTS(text=response, lang=language, slow=False)
             myobj.save("Voice.mp3")
             playsound("Voice.mp3")
 
-        elif tag == "areofcircle":
-            if "radius" in inp:
-                numbers = []
-                for word in inp.split():
-                    if word.isdigit():
-                        numbers.append(int(word))
+        else:
+            response = "The formula is pie times the radius squared"
 
-                response = bot_math.areaofcircle(int(numbers[0]))
+            myobj = gTTS(text=response, lang=language, slow=False)
+            myobj.save("Voice.mp3")
+            playsound("Voice.mp3")
 
-                myobj = gTTS(text=response, lang=language, slow=False)
-                myobj.save("Voice.mp3")
-                playsound("Voice.mp3")
+    elif tag == "circumference":
+        if "radius" in inp:
+            numbers = []
+            for word in inp.split():
+                if word.isdigit():
+                    numbers.append(int(word))
 
-            else:
-                response = "The formula is pie times the radius squared"
+            response = bot_math.circumfrance(int(numbers[0]))
 
-                myobj = gTTS(text=response, lang=language, slow=False)
-                myobj.save("Voice.mp3")
-                playsound("Voice.mp3")
-
-        elif tag == "circumference":
-            if "radius" in inp:
-                numbers = []
-                for word in inp.split():
-                    if word.isdigit():
-                        numbers.append(int(word))
-
-                response = bot_math.circumfrance(int(numbers[0]))
-
-                myobj = gTTS(text=response, lang=language, slow=False)
-                myobj.save("Voice.mp3")
-                playsound("Voice.mp3")
-
-            else:
-                response = "The formula is 2 times pie times the radius"
-
-                myobj = gTTS(text=response, lang=language, slow=False)
-                myobj.save("Voice.mp3")
-                playsound("Voice.mp3")
-
-        elif tag == "time_next_class":
-            list_of_intents = INTENTS['intents']
-
-            for i in list_of_intents:
-                if i['tag'] == tag:
-
-                    for name in LIST_OF_STUDENTS:
-                        if name in people:
-
-                            try:
-                                list_classes = json.load(open(PATH + "/" + name + "/classes.json"))
-                            except:
-                                string_response = "I do not have any classes for you"
-                                continue
-
-                            response = ""
-                            string_response = "Your next class is at "
-
-                            curr_date = date.today()
-                            day = calendar.day_name[curr_date.weekday()]
-
-                            time_checked = datetime.today().strftime("%I:%M %p")
-                            time_checked = datetime.strptime(time_checked,'%I:%M %p')
-
-                            list_of_classes = list_classes['Current Classes']
-
-                            day_count = curr_date.weekday()
-                            while day_count <= 7:
-                                for j in list_of_classes:
-                                    if j['Time'] != 'Online':
-                                        class_time = datetime.strptime(j['Time'],'%I:%M %p')
-                                        if (day in j['Days']) and (time_checked <= class_time):
-                                            response = string_response + j['Time']
-                                            break
-                                if response == "":
-                                    day_count += 1
-                                    if day_count == 7:
-                                        day_count = 0
-                                    else:
-                                        pass
-                                    day = calendar.day_name[day_count]
-
-                                    time_checked = datetime.strptime('1:00 AM','%I:%M %p')
-                                    string_response = "No classes for the rest of today"
-                                    string_response += ", your next class is on {} at ".format(day)
-                                else:
-                                    break
-
-                        else:
-                            response = "I do not have any classes for you"
-
-                    if response != "":
-                        myobj = gTTS(text=response, lang=language, slow=False)
-                        myobj.save("Voice.mp3")
-                        playsound("Voice.mp3")
-                    else:
-                        print("error")
-
-        elif tag == "locate_next_class":
-            list_of_intents = INTENTS['intents']
-
-            for i in list_of_intents:
-                if i['tag'] == tag:
-
-                    for name in LIST_OF_STUDENTS:
-                        if name in people:
-
-                            try:
-                                list_classes = json.load(open(PATH + "/" + name + "/classes.json"))
-                            except:
-                                string_response = "I do not have any classes for you"
-                                continue
-
-                            response = ""
-                            string_response = "Your class is in the "
-
-                            curr_date = date.today()
-                            day = calendar.day_name[curr_date.weekday()]
-
-                            time_checked = datetime.today().strftime("%I:%M %p")
-                            time_checked = datetime.strptime(time_checked,'%I:%M %p')
-
-                            list_of_classes = list_classes['Current Classes']
-
-                            day_count = curr_date.weekday()
-                            while day_count <= 7:
-                                for j in list_of_classes:
-                                    if j['Time'] != 'Online':
-                                        class_time = datetime.strptime(j['Time'],'%I:%M %p')
-                                        if (day in j['Days']) and (time_checked <= class_time):
-                                            response = string_response + j['Location']
-                                            break
-                                if response == "":
-                                    day_count += 1
-                                    if day_count == 7:
-                                        day_count = 0
-                                    else:
-                                        pass
-                                    day = calendar.day_name[day_count]
-
-                                    time_checked = datetime.strptime('1:00 AM','%I:%M %p')
-                                    string_response = "No classes for the rest of today, your next"
-                                    string_response += " class is on {} in the ".format(day)
-                                else:
-                                    break
-
-                        else:
-                            response = "I do not have any classes for you"
-
-                    if response != "":
-                        myobj = gTTS(text=response, lang=language, slow=False)
-                        myobj.save("Voice.mp3")
-                        playsound("Voice.mp3")
-                    else:
-                        print("error")
-
-        elif tag == "name_next_class":
-            list_of_intents = INTENTS['intents']
-
-            for i in list_of_intents:
-                if i['tag'] == tag:
-                    for name in LIST_OF_STUDENTS:
-                        if name in people:
-
-                            try:
-                                list_classes = json.load(open(PATH + "/" + name + "/classes.json"))
-                            except:
-                                string_response = "I do not have any classes for you"
-                                continue
-
-                            response = ""
-                            string_response = "Your next class is {}"
-
-                            curr_date = date.today()
-                            day = calendar.day_name[curr_date.weekday()]
-
-                            time_checked = datetime.today().strftime("%I:%M %p")
-                            time_checked = datetime.strptime(time_checked,'%I:%M %p')
-
-                            list_of_classes = list_classes['Current Classes']
-
-                            day_count = curr_date.weekday()
-                            while day_count <= 7:
-                                for j in list_of_classes:
-                                    if j['Time'] != 'Online':
-                                        class_time = datetime.strptime(j['Time'],'%I:%M %p')
-                                        if (day in j['Days']) and (time_checked <= class_time):
-                                            response = string_response.format(j['Class'])
-                                            break
-                                if response == "":
-                                    day_count += 1
-                                    if day_count == 7:
-                                        day_count = 0
-                                    else:
-                                        pass
-                                    day = calendar.day_name[day_count]
-
-                                    time_checked = datetime.strptime('1:00 AM','%I:%M %p')
-                                    string_response = "No classes for the rest of today"
-                                    string_response += ", your next class is {}"
-
-                                else:
-                                    break
-
-                        else:
-                            response = "I do not have any classes for you"
-
-                    if response != "":
-                        myobj = gTTS(text=response, lang=language, slow=False)
-                        myobj.save("Voice.mp3")
-                        playsound("Voice.mp3")
-                    else:
-                        print("error")
-
-        elif tag == "next_event":
-            list_of_intents = INTENTS['intents']
-
-            for i in list_of_intents:
-                if i['tag'] == tag:
-
-                    # run the checker to get all events
-                    events.create_events()
-
-                    string_response = "West Georgia's next event is " # random.choice(i['responses']
-
-                    cur_date = calendar.month_name[date.today().month] + " " + str(date.today().day)
-                    time_now = datetime.strptime(datetime.now().strftime("%H:%M %p"), "%H:%M %p")
-
-                    list_of_events = LIST_EVENTS['Events']
-
-                    for j in list_of_events:
-                        if cur_date == j['Date']:
-                            if time_now <= datetime.strptime(j['Start Time'],'%I:%M %p'):
-                                response = string_response + j['Name'] + " at " + j['Start Time']
-                                break
-                        else:
-                            response = "There are no more events today"
-
-                    myobj = gTTS(text=response, lang=language, slow=False)
-                    myobj.save("Voice.mp3")
-                    playsound("Voice.mp3")
+            myobj = gTTS(text=response, lang=language, slow=False)
+            myobj.save("Voice.mp3")
+            playsound("Voice.mp3")
 
         else:
-            list_of_intents = INTENTS['intents']
+            response = "The formula is 2 times pie times the radius"
 
-            for i in list_of_intents:
-                if i['tag'] == tag:
-                    response = random.choice(i['responses'])
+            myobj = gTTS(text=response, lang=language, slow=False)
+            myobj.save("Voice.mp3")
+            playsound("Voice.mp3")
 
+    elif tag == "time_next_class":
+        list_of_intents = INTENTS['intents']
+
+        for i in list_of_intents:
+            if i['tag'] == tag:
+
+                for name in LIST_OF_STUDENTS:
+                    if name in people:
+
+                        try:
+                            list_classes = json.load(open(PATH + "/" + name + "/classes.json"))
+                        except:
+                            string_response = "I do not have any classes for you"
+                            continue
+
+                        response = ""
+                        string_response = "Your next class is at "
+
+                        curr_date = date.today()
+                        day = calendar.day_name[curr_date.weekday()]
+
+                        time_checked = datetime.today().strftime("%I:%M %p")
+                        time_checked = datetime.strptime(time_checked,'%I:%M %p')
+
+                        list_of_classes = list_classes['Current Classes']
+
+                        day_count = curr_date.weekday()
+                        while day_count <= 7:
+                            for j in list_of_classes:
+                                if j['Time'] != 'Online':
+                                    class_time = datetime.strptime(j['Time'],'%I:%M %p')
+                                    if (day in j['Days']) and (time_checked <= class_time):
+                                        response = string_response + j['Time']
+                                        break
+                            if response == "":
+                                day_count += 1
+                                if day_count == 7:
+                                    day_count = 0
+                                else:
+                                    pass
+                                day = calendar.day_name[day_count]
+
+                                time_checked = datetime.strptime('1:00 AM','%I:%M %p')
+                                string_response = "No classes for the rest of today"
+                                string_response += ", your next class is on {} at ".format(day)
+                            else:
+                                break
+
+                    else:
+                        response = "I do not have any classes for you"
+
+                if response != "":
                     myobj = gTTS(text=response, lang=language, slow=False)
                     myobj.save("Voice.mp3")
                     playsound("Voice.mp3")
+                else:
+                    print("error")
+
+    elif tag == "locate_next_class":
+        list_of_intents = INTENTS['intents']
+
+        for i in list_of_intents:
+            if i['tag'] == tag:
+
+                for name in LIST_OF_STUDENTS:
+                    if name in people:
+
+                        try:
+                            list_classes = json.load(open(PATH + "/" + name + "/classes.json"))
+                        except:
+                            string_response = "I do not have any classes for you"
+                            continue
+
+                        response = ""
+                        string_response = "Your class is in the "
+
+                        curr_date = date.today()
+                        day = calendar.day_name[curr_date.weekday()]
+
+                        time_checked = datetime.today().strftime("%I:%M %p")
+                        time_checked = datetime.strptime(time_checked,'%I:%M %p')
+
+                        list_of_classes = list_classes['Current Classes']
+
+                        day_count = curr_date.weekday()
+                        while day_count <= 7:
+                            for j in list_of_classes:
+                                if j['Time'] != 'Online':
+                                    class_time = datetime.strptime(j['Time'],'%I:%M %p')
+                                    if (day in j['Days']) and (time_checked <= class_time):
+                                        response = string_response + j['Location']
+                                        break
+                            if response == "":
+                                day_count += 1
+                                if day_count == 7:
+                                    day_count = 0
+                                else:
+                                    pass
+                                day = calendar.day_name[day_count]
+
+                                time_checked = datetime.strptime('1:00 AM','%I:%M %p')
+                                string_response = "No classes for the rest of today, your next"
+                                string_response += " class is on {} in the ".format(day)
+                            else:
+                                break
+
+                    else:
+                        response = "I do not have any classes for you"
+
+                if response != "":
+                    myobj = gTTS(text=response, lang=language, slow=False)
+                    myobj.save("Voice.mp3")
+                    playsound("Voice.mp3")
+                else:
+                    print("error")
+
+    elif tag == "name_next_class":
+        list_of_intents = INTENTS['intents']
+
+        for i in list_of_intents:
+            if i['tag'] == tag:
+                for name in LIST_OF_STUDENTS:
+                    if name in people:
+
+                        try:
+                            list_classes = json.load(open(PATH + "/" + name + "/classes.json"))
+                        except:
+                            string_response = "I do not have any classes for you"
+                            continue
+
+                        response = ""
+                        string_response = "Your next class is {}"
+
+                        curr_date = date.today()
+                        day = calendar.day_name[curr_date.weekday()]
+
+                        time_checked = datetime.today().strftime("%I:%M %p")
+                        time_checked = datetime.strptime(time_checked,'%I:%M %p')
+
+                        list_of_classes = list_classes['Current Classes']
+
+                        day_count = curr_date.weekday()
+                        while day_count <= 7:
+                            for j in list_of_classes:
+                                if j['Time'] != 'Online':
+                                    class_time = datetime.strptime(j['Time'],'%I:%M %p')
+                                    if (day in j['Days']) and (time_checked <= class_time):
+                                        response = string_response.format(j['Class'])
+                                        break
+                            if response == "":
+                                day_count += 1
+                                if day_count == 7:
+                                    day_count = 0
+                                else:
+                                    pass
+                                day = calendar.day_name[day_count]
+
+                                time_checked = datetime.strptime('1:00 AM','%I:%M %p')
+                                string_response = "No classes for the rest of today"
+                                string_response += ", your next class is {}"
+
+                            else:
+                                break
+
+                    else:
+                        response = "I do not have any classes for you"
+
+                if response != "":
+                    myobj = gTTS(text=response, lang=language, slow=False)
+                    myobj.save("Voice.mp3")
+                    playsound("Voice.mp3")
+                else:
+                    print("error")
+
+    elif tag == "next_event":
+        list_of_intents = INTENTS['intents']
+
+        for i in list_of_intents:
+            if i['tag'] == tag:
+
+                # run the checker to get all events
+                events.create_events()
+
+                string_response = "West Georgia's next event is " # random.choice(i['responses']
+
+                cur_date = calendar.month_name[date.today().month] + " " + str(date.today().day)
+                time_now = datetime.strptime(datetime.now().strftime("%H:%M %p"), "%H:%M %p")
+
+                list_of_events = LIST_EVENTS['Events']
+
+                for j in list_of_events:
+                    if cur_date == j['Date']:
+                        if time_now <= datetime.strptime(j['Start Time'],'%I:%M %p'):
+                            response = string_response + j['Name'] + " at " + j['Start Time']
+                            break
+                    else:
+                        response = "There are no more events today"
+
+                myobj = gTTS(text=response, lang=language, slow=False)
+                myobj.save("Voice.mp3")
+                playsound("Voice.mp3")
+
+                return response, False
+
+    else:
+        list_of_intents = INTENTS['intents']
+
+        for i in list_of_intents:
+            if i['tag'] == tag:
+                response = random.choice(i['responses'])
+
+                myobj = gTTS(text=response, lang=language, slow=False)
+                myobj.save("Voice.mp3")
+                playsound("Voice.mp3")
+
+                return response, False
+
+
+def chat(people, start=""):
+    """
+    Defining of the loop for getting input, predicting and saying answer
+    until users says goodbye or quit.
+
+    :param people: list of people in the initial image (used for personalized questions)
+    :param start: The first thing the user said for startup sequence.
+    """
+
+    language = 'en'
+    
+    if start != "":
+        start_tag = chatbot_response(start)[0]
+
+        if start_tag == 'greeting':
+            # Possibly structure a specialized name introduction
+            introduction = ""
+
+            if any("Unknown" in element for element in people):
+                introduction = random.choice(i['responses']).format("")
+            else:
+                for place in range(len(people)):
+                    # Write a function to get the names of people and use mr and mrs
+                    # using an information.json file
+
+                    if " " in people[place]:
+                        first_name = people[place].split(" ")[0]
+                    else:
+                        first_name = people[place]
+
+                    if place == 0:
+                        names = first_name
+                    elif place > 0:
+                        names += " and " + first_name
+
+                list_of_intents = INTENTS['intents']
+                for i in list_of_intents:
+                    if i['tag'] == "greeting":
+                        introduction = random.choice(i['responses']).format(names)
+
+                myobj = gTTS(text=introduction, lang=language, slow=False)
+                myobj.save("Voice.mp3")
+                playsound("Voice.mp3")
+
+                return introduction, False
+
+        else: 
+            return tasks(start, people, language)
+
+    else:
+        inp = listening()
+
+        print("WAIT")
+
+        return tasks(inp, people, language)
 
 
 def running(people):
@@ -643,7 +666,7 @@ def running(people):
             break
 
         if "wolfie" in inpmain:
-            chat(inpmain, people)
+            interface.main(people, inpmain)
         else:
             pass
 

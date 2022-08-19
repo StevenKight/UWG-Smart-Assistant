@@ -9,7 +9,7 @@ import os
 import pickle
 from datetime import datetime
 
-import encoder
+import Recognition.encoder as encoder
 
 __author__ = "Steven Kight"
 __version__ = "1.5"

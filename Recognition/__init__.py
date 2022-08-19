@@ -20,7 +20,6 @@ Pylint: 8.13 (August 11, 2022)
 # pylint: disable=E1101
 
 import pickle
-import sys
 import os
 import shutil
 import uuid
@@ -29,7 +28,7 @@ from datetime import datetime
 import numpy as np
 import cv2
 
-import encoder
+import Recognition.encoder as encoder
 
 __author__ = "Steven Kight"
 __version__ = "2.0"

@@ -6,16 +6,17 @@ import Tasks
 import Recognition
 
 if __name__ == "__main__":
-    # Special Check for presentation
+    # Special Check for camera
     camera = input("camera? (y or n) ")
 
-    if camera == "n":
+    if camera in "n":
         camera = False
-    camera = True
+    else:
+        camera = True
     
     if not camera:
         people = ["Steven Kight"]
     else:
         people = Recognition.recognize_person()
-
+        
     Tasks.running(people)
