@@ -1,8 +1,6 @@
-import sys
 import time
 from tkinter import *
-from tkinter import ttk
-from PIL import Image, ImageTk
+from PIL import ImageTk, Image
 
 import Tasks
 
@@ -18,9 +16,21 @@ def main(people, inpmain):
 
    root = Tk()
    root.title("Wolfie")
+   width, height = root.winfo_screenwidth(), root.winfo_screenheight()
 
-   captions = Label(text="", background=BACKGROUND)
-   captions.place(relx=0.5, rely=0.75, anchor=CENTER)
+   image_file = 'Tasks/Interface Images/5106291.png'
+   img = ImageTk.PhotoImage(Image.open(image_file))
+
+   frame = Frame(root, width=width, height=height, background=BACKGROUND)
+   frame.pack()
+   frame.place(anchor='center', relx=0.5, rely=0.35)
+
+   # Create a Label Widget to display the text or Image
+   label = Label(frame, image = img, border=0)
+   label.pack()
+
+   captions = Label(frame, text="", background=BACKGROUND)
+   captions.place(relx=0.5, rely=0.65, anchor=CENTER)
    captions.config(font=('Helvetica bold',40), foreground='white')
 
    # Define Window Geometry
@@ -34,7 +44,6 @@ def main(people, inpmain):
    root.attributes('-topmost', True)
    root.configure(background=BACKGROUND)
 
-   width, height = root.winfo_screenwidth(), root.winfo_screenheight()
    root.geometry('%dx%d+0+0' % (width,height))
 
    def task(inp, caption):
