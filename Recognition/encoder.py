@@ -4,7 +4,8 @@ faces and to find distances between faces for recognition.
 
 Code contains a number of personal changes to alter the speed of recogition.
 
-Pylint: 9.07 (August 11, 2022)
+Pylint: 10.00 (August 25, 2022)
+E1101 disabled because pylint cannot find dlib modules
 """
 
 # pylint: disable=E1101
@@ -116,7 +117,7 @@ def load_image_file(file, mode='RGB'):
     return np.array(image)
 
 
-def face_locations(img, number_of_times_to_upsample=1, model="hog"):
+def face_locations_frame(img, number_of_times_to_upsample=1, model="hog"):
     """
     Returns an array of bounding boxes of human faces in a image
 
@@ -124,15 +125,19 @@ def face_locations(img, number_of_times_to_upsample=1, model="hog"):
     :param number_of_times_to_upsample: How many times to upsample the image looking for faces.
                                 Higher numbers find smaller faces.
     :param model: Which face detection model to use. "hog" is less accurate but faster on CPUs.
-                "cnn" is a more accurate deep-learning model which is 
+                "cnn" is a more accurate deep-learning model which is
                 GPU/CUDA accelerated (if available).
                 The default is "hog".
     :return: A list of tuples of found face locations in css (top, right, bottom, left) order
     """
     if model == "cnn":
-        return [_trim_css_to_bounds(_rect_to_css(face.rect), img.shape) for face in _raw_face_locations(img, number_of_times_to_upsample, "cnn")]
+        landmarks = _raw_face_locations(img, number_of_times_to_upsample, "cnn")
+        trim = [_trim_css_to_bounds(_rect_to_css(face.rect), img.shape) for face in landmarks]
+        return trim
 
-    return [_trim_css_to_bounds(_rect_to_css(face), img.shape) for face in _raw_face_locations(img, number_of_times_to_upsample, model)]
+    landmarks = _raw_face_locations(img, number_of_times_to_upsample, model)
+    trim = [_trim_css_to_bounds(_rect_to_css(face), img.shape) for face in landmarks]
+    return trim
 
 
 def face_encodings(face_image, known_face_locations=None, num_jitters=1, model="small"):
@@ -148,7 +153,13 @@ def face_encodings(face_image, known_face_locations=None, num_jitters=1, model="
     :return: A list of 128-dimensional face encodings (one for each face in the image)
     """
     raw_landmarks = _raw_face_landmarks(face_image, known_face_locations, model)
-    return [np.array(face_encoder.compute_face_descriptor(face_image, raw_landmark_set, num_jitters)) for raw_landmark_set in raw_landmarks]
+
+    array = []
+    for raw_landmark_set in raw_landmarks:
+        encoded = face_encoder.compute_face_descriptor(face_image, raw_landmark_set, num_jitters)
+        array.append(np.array(encoded))
+
+    return array
 
 
 def face_distance(face_encoding_list, face_to_compare):

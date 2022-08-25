@@ -10,12 +10,12 @@ import csv
 
 import numpy as np
 from keras.models import Sequential
-from keras.layers import Dense, Dropout
-from tensorflow_addons.layers import InstanceNormalization
+from keras.layers import Dense
 
 __author__ = "Steven Kight"
 __version__ = "1.5"
 __pylint__ = "2.14.4"
+
 
 def process_data(file_path):
     rows = []
@@ -54,7 +54,7 @@ def process_data(file_path):
 
 def load_data():
 
-    data, labels = process_data('Recognition/Audio/Models/data.csv')
+    data, labels = process_data('Research/Audio/Models/data.csv')
 
     # Relation Creation
     training = []
@@ -88,7 +88,7 @@ def train():
     EPOCHS = 75
     model.fit(np.array(train_x), np.array(train_y), epochs=EPOCHS, batch_size=5, verbose=1)
     
-    #model.save('Recognition/Audio/Models/audio_model.h5', hist)
+    #model.save('Research/Audio/Models/audio_model.h5', hist)
 
     print("model created")
     print("Full shape:" , np.shape(train_x), "Per example shape:" , np.shape(train_x[0]))
@@ -97,7 +97,7 @@ def train():
 
 def test(model):
 
-    data, labels = process_data('Recognition/Audio/Models/test.csv')
+    data, labels = process_data('Research/Audio/Models/test.csv')
 
     print(np.shape(data[0]))
     print(data[0].tolist())

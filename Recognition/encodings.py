@@ -2,14 +2,22 @@
 """
 This file is used to get and save the encodings to all faces in the dataset.
 
-Pylint: 8.93 (August 11, 2022)
+Pylint: 10.00 (August 25, 2022)
+E0401 disabeled because of importing recognition encoder error
+W0601 disabled because global variables are necessary
 """
 
+# pylint: disable=E0401
+# pylint: disable=W0601
+
+import csv
 import os
 import pickle
 from datetime import datetime
 
-import Recognition.encoder as encoder
+import numpy as np
+
+from recognition import encoder
 
 __author__ = "Steven Kight"
 __version__ = "1.5"
@@ -26,6 +34,7 @@ def time():
 
     current_time = now.strftime("%H:%M:%S")
     return "Current Time = " + current_time
+
 
 def encode_files(folder_path):
     """
@@ -110,6 +119,29 @@ def save(names_encodings):
 
     with open("Recognition/Models/Encodings_Names", "wb") as encoded_names:
         pickle.dump(names_encodings, encoded_names)
+
+    labels = []
+    for key in list(names_encodings.keys()):
+        for i in range(len(names_encodings[key])):
+            if key == "Steven Kight":
+                labels.append(1)
+            else:
+                labels.append(0)
+
+    csv_list = FACE_ENCODINGS
+    for i, _ in enumerate(csv_list):
+        csv_list[i] = np.append(csv_list[i], labels[i])
+
+    headers = []
+    for i in range(128):
+        headers.append(i)
+    headers.append("Name")
+
+    with open('Recognition/Models/NN/data.csv', 'w', encoding='UTF-8') as file:
+        # using csv.writer method from CSV package
+        write = csv.writer(file)
+        write.writerow(headers)
+        write.writerows(csv_list)
 
 
 if __name__ == "__main__":

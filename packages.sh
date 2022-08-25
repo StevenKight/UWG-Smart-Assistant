@@ -15,6 +15,6 @@ activate () {
 activate
 
 # Install the packages
-while read p; do
-  pip install $p
-done <requirments.txt
+#while read p; do
+#  pip install $p
+#done <requirments.txt

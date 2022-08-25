@@ -14,10 +14,14 @@ Other parts of it come from:
 https://towardsdatascience.com/building-a-face-recognizer-in-python-7fd6630c6340
 All other parts were written by me
 
-Pylint: 8.13 (August 11, 2022)
+Pylint: 9.73 (August 25, 2022)
+E1101 disabled because pylint cannot find cv2 modules
+E0401 disabeled because of importing recognition encoder error
 """
 
 # pylint: disable=E1101
+# pylint: disable=E0401
+# pylint: disable=W0601
 
 import pickle
 import os
@@ -28,7 +32,7 @@ from datetime import datetime
 import numpy as np
 import cv2
 
-import Recognition.encoder as encoder
+from recognition import encoder
 
 __author__ = "Steven Kight"
 __version__ = "2.0"
@@ -82,7 +86,7 @@ def run_webcam():
         # Grab a single frame of video
         frame = video_capture.read()[1]
 
-        face_frame = encoder.face_locations(frame)
+        face_frame = encoder.face_locations_frame(frame)
 
         if len(face_frame):
             break
@@ -108,7 +112,7 @@ def recognize_person():
     # Convert the image from BGR color to RGB color
     rgb_frame = face_frame[:, :, ::-1]
 
-    face_locations = encoder.face_locations(face_frame)
+    face_locations = encoder.face_locations_frame(face_frame)
 
     if len(face_locations):
         for face in face_locations:
@@ -172,11 +176,11 @@ if __name__ == "__main__":
     print(time(), "- Finish")
 
     INTRODUCTION = ""
-    for index in range(len(names)):
+    for index, name in enumerate(names):
         if index == 0:
-            INTRODUCTION += "Hello " + names[index]
+            INTRODUCTION += "Hello " + name
         else:
-            INTRODUCTION += " and " + names[index]
+            INTRODUCTION += " and " + name
 
     print(INTRODUCTION)
 
