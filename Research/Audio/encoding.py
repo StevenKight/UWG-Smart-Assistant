@@ -96,7 +96,7 @@ list_of_folders = next(os.walk(path))[1]
 # Folder names are listed and assigned to “names” variable.
 names = list_of_folders.copy()"""
 
-names = next(os.walk('Recognition/Audio/Dataset'))[2]
+names = next(os.walk('recognition/Audio/Dataset'))[2]
 
 people = {}
 cols = ["Frequency mean",
@@ -116,7 +116,7 @@ cols = ["Frequency mean",
 rows = []
 statistics = {}
 for name in names:
-    currentFile = 'Recognition/Audio/Dataset/' + name
+    currentFile = 'recognition/Audio/Dataset/' + name
     #files = os.listdir(currentFile)
     if name == ".DS_Store":
         continue
@@ -148,15 +148,15 @@ for name in names:
     people[name] = statistics
 
 try:
-    os.remove('Recognition/Audio/data.json')
-    os.remove('Recognition/Audio/data.csv')
+    os.remove('recognition/Audio/data.json')
+    os.remove('recognition/Audio/data.csv')
 except FileNotFoundError:
     pass
 
-with open('Recognition/Audio/Models/data.json', 'w') as fp:
+with open('recognition/Audio/Models/data.json', 'w') as fp:
     json.dump(people, fp, indent=4)
 
-with open('Recognition/Audio/Models/data.csv', 'w') as f:
+with open('recognition/Audio/Models/data.csv', 'w') as f:
 
     # using csv.writer method from CSV package
     write = csv.writer(f)
@@ -167,10 +167,10 @@ with open('Recognition/Audio/Models/data.csv', 'w') as f:
 # Create test file data
 rows = []
 for i in range(1,2):
-    Fs, aud = wavfile.read(f'Recognition/Audio/Test/Test_{i}.wav')
+    Fs, aud = wavfile.read(f'recognition/Audio/Test/Test_{i}.wav')
 
     statistics["Frequency"], frequency  = spectral_properties(aud[:,0], Fs)
-    statistics["Amplitude"], amplitude = oscillogram_properties(f'Recognition/Audio/Test/Test_{i}.wav')
+    statistics["Amplitude"], amplitude = oscillogram_properties(f'recognition/Audio/Test/Test_{i}.wav')
 
     row = []
     for stat in frequency:
@@ -189,7 +189,7 @@ for i in range(1,2):
     row.append(f'Test_{i}')
     rows.append(row)
 
-with open('Recognition/Audio/Models/test.csv', 'w') as f:
+with open('recognition/Audio/Models/test.csv', 'w') as f:
 
     # using csv.writer method from CSV package
     write = csv.writer(f)

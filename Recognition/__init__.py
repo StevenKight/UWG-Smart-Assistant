@@ -59,11 +59,11 @@ def get_known_info():
     global FACE_ENCODINGS
 
     # Create arrays of known face encodings and their names
-    with open("Recognition/Models/Encodings", "rb") as encoded:
+    with open("recognition/models/Encodings", "rb") as encoded:
         FACE_ENCODINGS = pickle.load(encoded)
         encoded.close()
 
-    with open("Recognition/Models/Encodings_Names", "rb") as encoded_names:
+    with open("recognition/models/Encodings_Names", "rb") as encoded_names:
         NAME_ENCODINGS = pickle.load(encoded_names)
         encoded_names.close()
 

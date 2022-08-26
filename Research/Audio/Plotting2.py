@@ -16,13 +16,13 @@ def f(filename, plotfile):
     plt.plot(abs(c[:(d-1)]), 'r')
     savefig(plotfile, bbox_inches='tight')
 
-files = os.listdir('Recognition/Audio/Dataset/')
+files = os.listdir('recognition/Audio/Dataset/')
 
 if '.DS_Store' in files:
     files.pop(0)
 
 for file in files:
-    plot_file = 'Recognition/Audio/Plots/' + file.replace('wav', 'png')
-    file = 'Recognition/Audio/Dataset/' + file
+    plot_file = 'recognition/Audio/Plots/' + file.replace('wav', 'png')
+    file = 'recognition/Audio/Dataset/' + file
 
     f(file, plot_file)

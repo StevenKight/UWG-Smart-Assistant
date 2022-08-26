@@ -114,19 +114,16 @@ def save(names_encodings):
     """
 
     # Save the encodings created to their own files
-    with open("Recognition/Models/Encodings", "wb") as encoded:
+    with open("recognition/models/Encodings", "wb") as encoded:
         pickle.dump(FACE_ENCODINGS, encoded)
 
-    with open("Recognition/Models/Encodings_Names", "wb") as encoded_names:
+    with open("recognition/models/Encodings_Names", "wb") as encoded_names:
         pickle.dump(names_encodings, encoded_names)
 
     labels = []
     for key in list(names_encodings.keys()):
-        for i in range(len(names_encodings[key])):
-            if key == "Steven Kight":
-                labels.append(1)
-            else:
-                labels.append(0)
+        for i, _ in enumerate(names_encodings[key]):
+            labels.append(key)
 
     csv_list = FACE_ENCODINGS
     for i, _ in enumerate(csv_list):
@@ -137,7 +134,7 @@ def save(names_encodings):
         headers.append(i)
     headers.append("Name")
 
-    with open('Recognition/Models/NN/data.csv', 'w', encoding='UTF-8') as file:
+    with open('recognition/models/data.csv', 'w', encoding='UTF-8') as file:
         # using csv.writer method from CSV package
         write = csv.writer(file)
         write.writerow(headers)

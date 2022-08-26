@@ -1,5 +1,5 @@
 # This folder is for work looking into speaker recognition
-[data.csv](Recognition/Audio/data.csv) file is for use in training while [data.json](Recognition/Audio/data.json) is a better formatted version to help see what each value is.
+[data.csv](recognition/Audio/data.csv) file is for use in training while [data.json](recognition/Audio/data.json) is a better formatted version to help see what each value is.
 
 ## Recognize Voices
 This has been done by [Apple on their Siri](https://machinelearning.apple.com/research/personalized-hey-siri), but it is only for one single persons voice.
