@@ -96,7 +96,7 @@ list_of_folders = next(os.walk(path))[1]
 # Folder names are listed and assigned to “names” variable.
 names = list_of_folders.copy()"""
 
-names = next(os.walk('recognition/Audio/Dataset'))[2]
+names = next(os.walk('Research/Audio/Dataset'))[2]
 
 people = {}
 cols = ["Frequency mean",
@@ -116,7 +116,7 @@ cols = ["Frequency mean",
 rows = []
 statistics = {}
 for name in names:
-    currentFile = 'recognition/Audio/Dataset/' + name
+    currentFile = 'Research/Audio/Dataset/' + name
     #files = os.listdir(currentFile)
     if name == ".DS_Store":
         continue
@@ -148,15 +148,15 @@ for name in names:
     people[name] = statistics
 
 try:
-    os.remove('recognition/Audio/data.json')
-    os.remove('recognition/Audio/data.csv')
+    os.remove('Research/Audio/Models/data.json')
+    os.remove('Research/Audio/Models/data.csv')
 except FileNotFoundError:
     pass
 
-with open('recognition/Audio/Models/data.json', 'w') as fp:
+with open('Research/Audio/Models/data.json', 'w') as fp:
     json.dump(people, fp, indent=4)
 
-with open('recognition/Audio/Models/data.csv', 'w') as f:
+with open('Research/Audio/Models/data.csv', 'w') as f:
 
     # using csv.writer method from CSV package
     write = csv.writer(f)
@@ -166,11 +166,11 @@ with open('recognition/Audio/Models/data.csv', 'w') as f:
 
 # Create test file data
 rows = []
-for i in range(1,2):
-    Fs, aud = wavfile.read(f'recognition/Audio/Test/Test_{i}.wav')
+for i in range(1,3):
+    Fs, aud = wavfile.read(f'Research/Audio/Test/Test_{i}.wav')
 
     statistics["Frequency"], frequency  = spectral_properties(aud[:,0], Fs)
-    statistics["Amplitude"], amplitude = oscillogram_properties(f'recognition/Audio/Test/Test_{i}.wav')
+    statistics["Amplitude"], amplitude = oscillogram_properties(f'Research/Audio/Test/Test_{i}.wav')
 
     row = []
     for stat in frequency:
@@ -189,7 +189,7 @@ for i in range(1,2):
     row.append(f'Test_{i}')
     rows.append(row)
 
-with open('recognition/Audio/Models/test.csv', 'w') as f:
+with open('Research/Audio/Models/test.csv', 'w') as f:
 
     # using csv.writer method from CSV package
     write = csv.writer(f)

@@ -13,13 +13,7 @@ E0401 disabeled because of importing recognition encoder error
 import cv2
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn.neural_network import MLPClassifier
-from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
-from sklearn.naive_bayes import GaussianNB
-from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 
 from recognition import encoder
 
@@ -62,13 +56,22 @@ def get_known_info():
     numeric_features = numeric_features.values.tolist()
 
     binary_labels = []
+    unique_names = []
     for name1 in labels:
-        if name1 == "Steven Kight":
-            binary_labels.append(1)
-        else:
-            binary_labels.append(0)
-    
-    binary_labels = [binary_labels]
+
+        if name1 in unique_names:
+            continue
+
+        unique_names.append(name1)
+
+        new_label = []
+        for name2 in labels:
+            if name2 == name1:
+                new_label.append(1)
+            else:
+                new_label.append(0)
+
+        binary_labels.append(new_label)
 
     train_test_array = []
     for label in binary_labels:
@@ -77,7 +80,7 @@ def get_known_info():
         )
         train_test_array.append((x_train, x_test, y_train, y_test))
 
-    return train_test_array
+    return train_test_array, unique_names
 
 
 def train():
@@ -86,34 +89,23 @@ def train():
     across mulitple models to find best one to use for each individual
     """
 
-    train_test = get_known_info()
-
-    classifiers = [
-        KNeighborsClassifier(3),
-        SVC(kernel="linear", C=0.025),
-        SVC(gamma=2, C=1),
-        DecisionTreeClassifier(max_depth=5),
-        RandomForestClassifier(max_depth=5, n_estimators=10, max_features=1),
-        MLPClassifier(alpha=1, max_iter=1000),
-        AdaBoostClassifier(),
-        GaussianNB(),
-        QuadraticDiscriminantAnalysis()
-    ]
+    train_test, people = get_known_info()
 
     little_data = []
     for x_train, x_test, y_train, y_test in train_test:
         models = []
         scores = []
         index = train_test.index((x_train, x_test, y_train, y_test))
-        for clf in classifiers:
-            try:
-                clf.fit(x_train, y_train)
-                score = clf.score(x_test, y_test)
-                models.append(clf)
-                scores.append(score)
-            except ValueError:
-                print(f"Index {index} has to little data")
-                little_data.append(index)
+
+        clf = SVC(gamma=2, C=1)
+        try:
+            clf.fit(x_train, y_train)
+            score = clf.score(x_test, y_test)
+            models.append(clf)
+            scores.append(score)
+        except ValueError:
+            print(f"{people[index]} has to little data")
+            little_data.append(people[index])
 
     print("models created")
 

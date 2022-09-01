@@ -74,8 +74,8 @@ def train():
     train_x, train_y = load_data()
 
     model = Sequential()
-    model.add(Dense(128, input_shape=np.shape(train_x[0]), activation='sigmoid'))
-    model.add(Dense(64, activation='sigmoid'))
+    model.add(Dense(128, input_shape=np.shape(train_x[0]), activation='tanh'))
+    model.add(Dense(64, activation='tanh'))
     model.add(Dense(len(train_y[0]), activation='softmax'))
 
     # Compile model
@@ -86,7 +86,7 @@ def train():
     )
 
     EPOCHS = 75
-    model.fit(np.array(train_x), np.array(train_y), epochs=EPOCHS, batch_size=5, verbose=1)
+    model.fit(np.array(train_x), np.array(train_y), epochs=EPOCHS, verbose=1)
     
     #model.save('Research/Audio/Models/audio_model.h5', hist)
 
@@ -97,7 +97,7 @@ def train():
 
 def test(model):
 
-    data, labels = process_data('Research/Audio/Models/test.csv')
+    data, _ = process_data('Research/Audio/Models/test.csv')
 
     print(np.shape(data[0]))
     print(data[0].tolist())
