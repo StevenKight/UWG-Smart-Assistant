@@ -85,7 +85,7 @@ def record_voice(name: str):
 
     # Then Save the image then move it to that persons directory
     filename = path + "/" + name + "/Voice/"
-    filename += str(uuid.uuid4())+'.jpg'
+    filename += str(uuid.uuid4())+'.wav'
 
     port_audio = pyaudio.PyAudio()  # Create an interface to PortAudio
 
