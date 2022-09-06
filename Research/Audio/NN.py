@@ -12,14 +12,16 @@ import numpy as np
 from keras.models import Sequential
 from keras.layers import Dense
 
-__author__ = "Steven Kight"
-__version__ = "1.5"
+__author__ = "Ana Stanescu"
+__version__ = "1.6"
 __pylint__ = "2.14.4"
 
 
+X_TRAIN = 'will hold train'
+
 def process_data(file_path):
     rows = []
-    with open(file_path, newline='') as csvfile:
+    with open(file_path, newline='', encoding='utf-8') as csvfile:
         audio_reader = csv.reader(csvfile, delimiter=' ', quotechar='|')
         for row in audio_reader:
             rows.append(row)
@@ -65,46 +67,50 @@ def load_data():
     random.shuffle(training)
     training = np.array(training)
 
-    train_x = list(training[:, 0])
-    train_y = list(training[:, 1])
-    print(f"Training data created with {np.shape(train_x[0])} input shape")
-    return train_x, train_y
+    x_train = list(training[:, 0])
+    y_train = list(training[:, 1])
+    print(f"Training data created with {np.shape(x_train[0])} input shape")
+    return x_train, y_train
 
 def train():
-    train_x, train_y = load_data()
+    x_train, y_train = load_data()
+    x_train = np.array(x_train)
+    y_train = np.array(y_train)
+    print(f'x_train:\n{x_train}')
+    print(f'x_train:\n{y_train}')
+    X_TRAIN = x_train
 
     model = Sequential()
-    model.add(Dense(128, input_shape=np.shape(train_x[0]), activation='tanh'))
-    model.add(Dense(64, activation='tanh'))
-    model.add(Dense(len(train_y[0]), activation='softmax'))
+    model.add(Dense(1, input_dim=len(x_train[0]), activation='tanh', name='hidden_layer'))
+    #model.add(Dense(64, activation='tanh'))
+    model.add(Dense(units=len(y_train[0]), activation='softmax', name='output_layer'))
 
     # Compile model
     model.compile(
         loss='categorical_crossentropy',
-        optimizer="adam",
+        optimizer='adam',
         metrics=['accuracy']
     )
+    print(f'Summary:\n{model.summary()}')
 
-    EPOCHS = 75
-    model.fit(np.array(train_x), np.array(train_y), epochs=EPOCHS, verbose=1)
-    
+    EPOCHS = 2
+    history = model.fit(X_TRAIN, y_train, epochs=EPOCHS, verbose=1)    
     #model.save('Research/Audio/Models/audio_model.h5', hist)
-
-    print("model created")
-    print("Full shape:" , np.shape(train_x), "Per example shape:" , np.shape(train_x[0]))
+    print("Full shape:" , np.shape(X_TRAIN), "Per example shape:" , np.shape(x_train[0]))
     return model
 
 
 def test(model):
-
     data, _ = process_data('Research/Audio/Models/test.csv')
-
+    print(f'data[0] {data[0]}')
     print(np.shape(data[0]))
-    print(data[0].tolist())
-    model.predict(data[0])
+    print(data[0])
+
+    prediction_vector = model.predict([[3299.73,227.14,4159.46,18.03,428.79,\
+        3272.01,3327.45,427.32,1372.11,4.42,25.58,420.85,433.78]])
+    print(prediction_vector)
+    print(f'index: {np.argmax(prediction_vector)}')
 
 if __name__ == "__main__":
-    
     model = train()
-
     test(model)
