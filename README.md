@@ -18,3 +18,8 @@ Wolfie is a personal AI system designed for use around the West Georgia campus t
 ## Presentation and Other Resources
 ### - [Abstract](https://docs.google.com/document/d/1qdX_mmQ2pqs2JabMbmSL3dWtz6Q7pB6P7xGLphXx_9k/edit?usp=sharing)
 ### - [Presentation](https://docs.google.com/presentation/d/1TWBlQ1JnHl5QW7L80rKWLOFsUkJFzI1cYyCgjTL8AG8/edit?usp=sharing)
+
+# TODO:
+- Adjust individual directories according to contained README.md file
+- Pylint all
+- Bring in Conversation

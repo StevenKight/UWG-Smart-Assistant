@@ -1,0 +1,1 @@
+# This directory is utilized for face recognition

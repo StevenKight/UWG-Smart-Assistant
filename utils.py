@@ -17,7 +17,7 @@ import wave
 import pyaudio
 import cv2
 
-import recognition
+import recognition.face as recognition
 
 __author__ = "Steven Kight"
 __version__ = "1.0"
@@ -85,7 +85,7 @@ def record_voice(name: str):
 
     # Then Save the image then move it to that persons directory
     filename = path + "/" + name + "/Voice/"
-    filename += str(uuid.uuid4())+'.wav'
+    filename += str(uuid.uuid4())+'.jpg'
 
     port_audio = pyaudio.PyAudio()  # Create an interface to PortAudio
 

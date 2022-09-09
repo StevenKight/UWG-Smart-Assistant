@@ -3,8 +3,7 @@ The main way to run a full test of the AI.
 """
 
 import conversation
-import recognition
-from recognition import encodings
+from recognition import face, audio
 
 if __name__ == "__main__":
 
@@ -16,8 +15,8 @@ if __name__ == "__main__":
         camera = True
 
     if not camera:
-        people = ["Steven Kight"]
+        people = audio.recognize_person()
     else:
-        people = recognition.recognize_person()
+        people = face.recognize_person()
 
-    conversation.running(["Steven Kight"])
+    conversation.running(people)
