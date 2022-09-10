@@ -10,15 +10,16 @@ E0401 disabeled because of importing recognition encoder error
 # pylint: disable=E0401
 # pylint: disable=E1101
 
+import numpy as np
+from keras.models import Sequential
+from keras.layers import Dense, Input
 import cv2
 import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.svm import SVC
 
-from recognition import encoder
+from smart_assistant.recognition.face import encoder
 
 __author__ = "Steven Kight"
-__version__ = "1.0"
+__version__ = "1.2"
 __pylint__ = "2.14.4"
 
 def get_known_info():
@@ -43,44 +44,29 @@ def get_known_info():
             "118","119","120","121","122","123","124","125","126",
             "127","Name"]
 
-    dataframe = pd.read_csv("recognition/models/data.csv",
+    dataframe = pd.read_csv("smart_assistant/recognition/face/models/data.csv",
         names=header)
 
     labels = dataframe.pop('Name')
     labels.pop(0)
-    labels = labels.values.tolist()
+    labels = np.array(labels.values.tolist())
+    unique_labels = np.unique(labels)
+
+    binary_labels = []
+    for name in labels:
+        zeros = np.zeros(len(unique_labels), dtype=int)
+        index = np.where(unique_labels == name)[0][0]
+        zeros[index] = 1
+        binary_labels.append(zeros)
 
     header.pop(len(header)-1)
     numeric_features = dataframe[header]
     numeric_features = numeric_features.iloc[1: , :]
     numeric_features = numeric_features.values.tolist()
 
-    binary_labels = []
-    unique_names = []
-    for name1 in labels:
+    numeric_features = [np.array(array).T for array in numeric_features]
 
-        if name1 in unique_names:
-            continue
-
-        unique_names.append(name1)
-
-        new_label = []
-        for name2 in labels:
-            if name2 == name1:
-                new_label.append(1)
-            else:
-                new_label.append(0)
-
-        binary_labels.append(new_label)
-
-    train_test_array = []
-    for label in binary_labels:
-        x_train, x_test, y_train, y_test = train_test_split(
-            numeric_features, label, test_size=0.2, random_state=42
-        )
-        train_test_array.append((x_train, x_test, y_train, y_test))
-
-    return train_test_array, unique_names
+    return numeric_features, binary_labels
 
 
 def train():
@@ -89,27 +75,31 @@ def train():
     across mulitple models to find best one to use for each individual
     """
 
-    train_test, people = get_known_info()
+    x_train, y_train = get_known_info()
+    x_train = np.array(x_train)
+    y_train = np.array(y_train)
 
-    little_data = []
-    for x_train, x_test, y_train, y_test in train_test:
-        models = []
-        scores = []
-        index = train_test.index((x_train, x_test, y_train, y_test))
+    model = Sequential()
+    model.add(Input(shape=np.shape(x_train[0])))
+    model.add(Dense(len(x_train[0]), activation='tanh', name='hidden_layer'))
+    model.add(Dense(units=len(y_train[0]), activation='softmax', name='output_layer'))
 
-        clf = SVC(gamma=2, C=1)
-        try:
-            clf.fit(x_train, y_train)
-            score = clf.score(x_test, y_test)
-            models.append(clf)
-            scores.append(score)
-        except ValueError:
-            print(f"{people[index]} has to little data")
-            little_data.append(people[index])
+    # Compile model
+    model.compile(
+        loss='categorical_crossentropy',
+        optimizer='adam',
+        metrics=['accuracy']
+    )
+    print(f'Input: {model.input_shape}')
+    print("Full shape:" , np.shape(x_train), "Per example shape:" , np.shape(x_train[0]))
+    quit()
 
-    print("models created")
+    print(f'Summary:\n{model.summary()}')
 
-    return models
+    EPOCHS = 2
+    history = model.fit(x_train, y_train, epochs=EPOCHS, verbose=1)
+    #model.save('Research/Audio/Models/audio_model.h5', hist)
+    return model
 
 
 def run_webcam():
@@ -163,19 +153,17 @@ def recognize_person():
         return face_encodings
 
 
-def test(models):
+def test(model):
     """
     Utilizes a passed in model or list of models and the webcam
     to predict the person in the frame based on the model.
     """
 
-    data = recognize_person()
+    data = recognize_person()[0][0]
 
-    res = []
-    if isinstance(models, list):
-        for model in models:
-            res.append(model.predict(data[0][0].reshape(1,-1)))
-    else:
-        res = model.predict(data)
+    data = np.flip(data, 0)
+    print(np.shape(data))
+
+    res = model.predict(data)
 
     return res

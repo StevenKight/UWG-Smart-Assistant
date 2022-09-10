@@ -15,7 +15,7 @@ __author__ = "Steven Kight"
 __version__ = "1.5"
 __pylint__ = "2.14.4"
 
-def write_json_info(new_data: dict, filename='conversation/uwg/Events.json') -> None:
+def write_json_info(new_data: dict, filename='smart_assistant/conversation/uwg/Events.json') -> None:
     """
     Write new information to the Events Json File.
 
@@ -130,14 +130,14 @@ def create_events() -> None:
     Create the new events and store to json file
     """
 
-    json_path = 'conversation/uwg/Events.json'
+    json_path = 'smart_assistant/conversation/uwg/Events.json'
 
     if os.path.exists(json_path):
         os.remove(json_path)
 
     new_dictionary = {"Events": []}
     json_string = json.dumps(new_dictionary, indent=4)
-    with open("conversation/uwg/Events.json", "w", encoding="utf8") as inform:
+    with open("smart_assistant/conversation/uwg/Events.json", "w", encoding="utf8") as inform:
         inform.write(json_string)
         inform.close()
 

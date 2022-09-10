@@ -22,7 +22,7 @@ def get_known_info():
             "Amplitude skew","Amplitude kurt","Amplitude Confidence Interval Low",
             "Amplitude Confidence Interval High","Name"]
 
-    dataframe = pd.read_csv("Research/Audio/Models/data.csv",
+    dataframe = pd.read_csv("smart_assistant/recognition/audio/Models/data.csv",
         names=header)
 
     labels = dataframe.pop('Name')

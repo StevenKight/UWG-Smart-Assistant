@@ -33,8 +33,8 @@ from playsound import playsound
 from gtts import gTTS
 import speech_recognition as sr
 
-from conversation import uwg
-from conversation import utils
+from smart_assistant.conversation import uwg
+from smart_assistant.conversation import utils
 
 __author__ = "Steven Kight"
 __version__ = "2.0"
@@ -44,13 +44,13 @@ __pylint__ = "2.14.4"
 LEMMATIZER = WordNetLemmatizer()
 
 # Loads pre trained model and parts
-MODEL = load_model('conversation/models/chatbot_model.h5')
+MODEL = load_model('smart_assistant/conversation/models/chatbot_model.h5')
 
-INTENTS = json.load(open('conversation/models/intents.json', encoding='UTF-8'))
-WORDS = pickle.load(open('conversation/models/words.pkl', 'rb'))
-CLASSES = pickle.load(open('conversation/models/classes.pkl', 'rb'))
+INTENTS = json.load(open('smart_assistant/conversation/models/intents.json', encoding='UTF-8'))
+WORDS = pickle.load(open('smart_assistant/conversation/models/words.pkl', 'rb'))
+CLASSES = pickle.load(open('smart_assistant/conversation/models/classes.pkl', 'rb'))
 
-LIST_EVENTS = json.load(open('conversation/uwg/Events.json', encoding='UTF-8'))
+LIST_EVENTS = json.load(open('smart_assistant/conversation/uwg/Events.json', encoding='UTF-8'))
 
 # Get students files from UWG
 CUR_DIR = os.getcwd()
@@ -60,7 +60,7 @@ PATH = os.path.join(CUR_DIR, 'Dataset')
 LIST_OF_STUDENTS = []
 
 # open file and read the content in a list
-with open('conversation/uwg/students.txt', 'r', encoding='UTF-8') as filehandle:
+with open('smart_assistant/conversation/uwg/students.txt', 'r', encoding='UTF-8') as filehandle:
     for line in filehandle:
         # remove linebreak which is the last character of the string
         currentPlace = line[:-1]

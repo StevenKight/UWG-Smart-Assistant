@@ -17,7 +17,7 @@ from datetime import datetime
 
 import numpy as np
 
-from recognition.face import encoder
+from smart_assistant.recognition.face import encoder
 
 __author__ = "Steven Kight"
 __version__ = "1.5"
@@ -114,10 +114,10 @@ def save(names_encodings):
     """
 
     # Save the encodings created to their own files
-    with open("recognition/face/models/Encodings", "wb") as encoded:
+    with open("smart_assistant/recognition/face/models/Encodings", "wb") as encoded:
         pickle.dump(FACE_ENCODINGS, encoded)
 
-    with open("recognition/face/models/Encodings_Names", "wb") as encoded_names:
+    with open("smart_assistant/recognition/face/models/Encodings_Names", "wb") as encoded_names:
         pickle.dump(names_encodings, encoded_names)
 
     labels = []
@@ -134,7 +134,7 @@ def save(names_encodings):
         headers.append(i)
     headers.append("Name")
 
-    with open('recognition/face/models/data.csv', 'w', encoding='UTF-8') as file:
+    with open('smart_assistant/recognition/face/models/data.csv', 'w', encoding='UTF-8') as file:
         # using csv.writer method from CSV package
         write = csv.writer(file)
         write.writerow(headers)

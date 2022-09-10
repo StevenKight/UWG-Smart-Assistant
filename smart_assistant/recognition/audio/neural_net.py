@@ -56,7 +56,7 @@ def process_data(file_path):
 
 def load_data():
 
-    data, labels = process_data('Research/Audio/Models/data.csv')
+    data, labels = process_data('smart_assistant/research/audio/Models/data.csv')
 
     # Relation Creation
     training = []
@@ -101,7 +101,7 @@ def train():
 
 
 def test(model):
-    data, _ = process_data('Research/Audio/Models/test.csv')
+    data, _ = process_data('smart_assistant/research/audio/Models/test.csv')
     print(f'data[0] {data[0]}')
     print(np.shape(data[0]))
     print(data[0])

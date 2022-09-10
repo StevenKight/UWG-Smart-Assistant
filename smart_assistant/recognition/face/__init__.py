@@ -32,7 +32,7 @@ from datetime import datetime
 import numpy as np
 import cv2
 
-from recognition.face import encoder
+from smart_assistant.recognition.face import encoder
 
 __author__ = "Steven Kight"
 __version__ = "2.0"
@@ -59,11 +59,11 @@ def get_known_info():
     global FACE_ENCODINGS
 
     # Create arrays of known face encodings and their names
-    with open("recognition/face/models/Encodings", "rb") as encoded:
+    with open("smart_assistant/recognition/face/models/Encodings", "rb") as encoded:
         FACE_ENCODINGS = pickle.load(encoded)
         encoded.close()
 
-    with open("recognition/face/models/Encodings_Names", "rb") as encoded_names:
+    with open("smart_assistant/recognition/face/models/Encodings_Names", "rb") as encoded_names:
         NAME_ENCODINGS = pickle.load(encoded_names)
         encoded_names.close()
 

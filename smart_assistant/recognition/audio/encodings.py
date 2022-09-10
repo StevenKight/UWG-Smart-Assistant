@@ -9,7 +9,7 @@ OSC_CI = []
 SPEC_CI = []
 
 def oscillogram_properties(file: str) -> dict:
-    sampleRate, audioBuffer = wavfile.read(file)
+    _, audioBuffer = wavfile.read(file)
 
     sumList = []
     for index in range(len(audioBuffer)):
@@ -86,16 +86,6 @@ def spectral_properties(audio: np.ndarray, fs: int) -> dict:
 
     return result_d, list_d
 
-"""# All the images are in one folder named "Dataset".
-cur_direc = os.getcwd()
-path = os.path.join(cur_direc, 'Dataset/')
-
-# Folders must be named after person
-list_of_folders = next(os.walk(path))[1]
-
-# Folder names are listed and assigned to “names” variable.
-names = list_of_folders.copy()"""
-
 names = next(os.walk('recognition/Audio/Dataset'))[2]
 
 people = {}
@@ -148,15 +138,15 @@ for name in names:
     people[name] = statistics
 
 try:
-    os.remove('recognition/Audio/data.json')
-    os.remove('recognition/Audio/data.csv')
+    os.remove('smart_assistant/recognition/Audio/data.json')
+    os.remove('smart_assistant/recognition/Audio/data.csv')
 except FileNotFoundError:
     pass
 
-with open('recognition/Audio/Models/data.json', 'w') as fp:
+with open('smart_assistant/recognition/audio/Models/data.json', 'w') as fp:
     json.dump(people, fp, indent=4)
 
-with open('recognition/Audio/Models/data.csv', 'w') as f:
+with open('smart_assistant/recognition/audio/Models/data.csv', 'w') as f:
 
     # using csv.writer method from CSV package
     write = csv.writer(f)
@@ -167,10 +157,10 @@ with open('recognition/Audio/Models/data.csv', 'w') as f:
 # Create test file data
 rows = []
 for i in range(1,2):
-    Fs, aud = wavfile.read(f'recognition/Audio/Test/Test_{i}.wav')
+    Fs, aud = wavfile.read(f'smart_assistant/recognition/Audio/Test/Test_{i}.wav')
 
     statistics["Frequency"], frequency  = spectral_properties(aud[:,0], Fs)
-    statistics["Amplitude"], amplitude = oscillogram_properties(f'recognition/Audio/Test/Test_{i}.wav')
+    statistics["Amplitude"], amplitude = oscillogram_properties(f'smart_assistant/recognition/Audio/Test/Test_{i}.wav')
 
     row = []
     for stat in frequency:
@@ -189,30 +179,10 @@ for i in range(1,2):
     row.append(f'Test_{i}')
     rows.append(row)
 
-with open('recognition/Audio/Models/test.csv', 'w') as f:
+with open('smart_assistant/recognition/Audio/Models/test.csv', 'w') as f:
 
     # using csv.writer method from CSV package
     write = csv.writer(f)
 
     write.writerow(cols)
     write.writerows(rows)
-
-"""
-for ci1 in OSC_CI:
-    test1 = ci1[0]
-    test2 = ci1[1]
-    for ci2 in OSC_CI:
-        if ci2[0] > ci1[0] and ci2[0] < ci1[1]:
-            print(ci1, "overlaps", ci2)
-        if ci2[1] > ci1[0] and ci2[1] < ci1[1]:
-            print(ci1, "overlaps", ci2)
-
-for ci1 in SPEC_CI:
-    test1 = ci1[0]
-    test2 = ci1[1]
-    for ci2 in SPEC_CI:
-        if ci2[0] > ci1[0] and ci2[0] < ci1[1]:
-            print(ci1, "overlaps", ci2)
-        if ci2[1] > ci1[0] and ci2[1] < ci1[1]:
-            print(ci1, "overlaps", ci2)
-"""

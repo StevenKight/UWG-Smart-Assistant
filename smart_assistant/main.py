@@ -5,7 +5,10 @@ The main way to run a full test of the AI.
 import conversation
 from recognition import face, audio
 
-if __name__ == "__main__":
+def main():
+    """
+    This runs the smart assistant in its entirety
+    """
 
     camera = input("camera? (y or n) ")
 
@@ -20,3 +23,6 @@ if __name__ == "__main__":
         people = face.recognize_person()
 
     conversation.running(people)
+
+if __name__ == "__main__":
+    main()
