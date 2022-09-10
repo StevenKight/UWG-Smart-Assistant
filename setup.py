@@ -28,7 +28,7 @@ setup(
     packages=find_packages(),
     entry_points={
         'console_scripts': [
-            'UWG-Smart-Assistant = smart_assistant.main:main'
+            'wolfie = smart_assistant.main:main'
         ]
     }
 )
