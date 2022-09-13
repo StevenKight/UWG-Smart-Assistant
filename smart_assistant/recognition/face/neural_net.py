@@ -225,7 +225,7 @@ def test(test_model):
             res = res.tolist()[0]
             confidence = res[max_index]
 
-            if confidence > 0.5:
+            if confidence > 0.75:
                 print(NAMES[max_index], ":", res[max_index])
             else:
                 print(f"Unknown, closest is: {NAMES[max_index]} : {res[max_index]}")
