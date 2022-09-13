@@ -114,10 +114,10 @@ def save(names_encodings):
     """
 
     # Save the encodings created to their own files
-    with open("smart_assistant/recognition/face/models/Encodings", "wb") as encoded:
+    with open("smart_assistant/recognition/face/models/Encodings.txt", "wb") as encoded:
         pickle.dump(FACE_ENCODINGS, encoded)
 
-    with open("smart_assistant/recognition/face/models/Encodings_Names", "wb") as encoded_names:
+    with open("smart_assistant/recognition/face/models/Encodings_Names.txt", "wb") as encoded_names:
         pickle.dump(names_encodings, encoded_names)
 
     labels = []

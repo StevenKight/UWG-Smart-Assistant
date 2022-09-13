@@ -10,8 +10,9 @@ E0401 disabeled because of importing recognition encoder error
 # pylint: disable=E0401
 # pylint: disable=E1101
 
+import os
 import numpy as np
-from keras.models import Sequential
+from keras.models import Sequential, load_model
 from keras.layers import Dense
 import cv2
 import pandas as pd
@@ -24,18 +25,7 @@ __pylint__ = "2.14.4"
 
 NAMES = None
 
-
-def get_known_info():
-    """
-    Imports known encodings and names.
-
-    ### Return
-        A list of all encodings and a dictionary with names as keys and encodings as values.
-    """
-
-    global NAMES
-
-    header = ["0","1","2","3","4","5","6","7","8","9","10","11",
+HEADER = ["0","1","2","3","4","5","6","7","8","9","10","11",
             "12","13","14","15","16","17","18","19","20","21","22",
             "23","24","25","26","27","28","29","30","31","32","33",
             "34","35","36","37","38","39","40","41","42","43","44",
@@ -47,15 +37,74 @@ def get_known_info():
             "100","101","102","103","104","105","106","107","108",
             "109","110","111","112","113","114","115","116","117",
             "118","119","120","121","122","123","124","125","126",
-            "127","Name"]
+            "127", "Name"]
 
+
+def load_unique_names():
+    """
+    Gets the list of names saved in a .txt.
+    """
+
+    global NAMES
+    
+    names = []
+
+    with open('smart_assistant/recognition/face/models/names.txt', 'r', encoding='utf-8') as fp:
+        for line in fp:
+            x = line[:-1]
+            names.append(x)
+
+    NAMES = names
+
+
+def get_csv_info():
+    """
+    Get the information from the csv.
+    """
+ 
     dataframe = pd.read_csv("smart_assistant/recognition/face/models/data.csv",
-        names=header)
+        names=HEADER)
 
-    labels = dataframe.pop('Name')
+    return dataframe
+
+
+def get_names_info(data):
+    """
+    Gets the names of all people in the dataset
+    """
+
+    global NAMES
+
+    labels = data.pop('Name')
     labels.pop(0)
     labels = np.array(labels.values.tolist())
     NAMES = np.unique(labels)
+
+    with open('smart_assistant/recognition/face/models/names.txt', 'w', encoding='utf-8') as file:
+        for name in NAMES:
+            file.write(f"{name}\n")
+        print('Done')
+
+    return labels
+
+
+def get_known_info():
+    """
+    Imports known encodings and names.
+
+    ### Return
+        A list of all encodings and a dictionary with names as keys and encodings as values.
+    """
+
+    try:
+        os.remove('smart_assistant/recognition/face/models/names.txt')
+        os.remove('smart_assistant/recognition/face/models/face_model.h5')
+    except OSError:
+        pass
+
+    dataframe = get_csv_info()
+
+    labels = get_names_info(dataframe)
 
     binary_labels = []
     for person in labels:
@@ -64,8 +113,8 @@ def get_known_info():
         zeros[index] = 1
         binary_labels.append(zeros)
 
-    header.pop(len(header)-1)
-    numeric_features = dataframe[header]
+    HEADER.pop(len(HEADER)-1)
+    numeric_features = dataframe[HEADER]
     numeric_features = numeric_features.iloc[1: , :]
     numeric_features = numeric_features.values.tolist()
 
@@ -158,23 +207,38 @@ def recognize_person():
         return face_encodings
 
 
-def test(model):
+def test(test_model):
     """
     Utilizes a passed in model or list of models and the webcam
     to predict the person in the frame based on the model.
     """
 
-    data = recognize_person()[0]
-    data = np.array(data)
+    data = recognize_person()
 
-    try:
-        res = model.predict(data, batch_size=len(data[0]))
-        max_index = np.argmax(res)
-        print(NAMES[max_index])
-    except ValueError:
-        print("ValueError")
+    for item in data:
+        item = np.array(item)
+
+        try:
+            res = test_model.predict(item, batch_size=len(item[0]))
+            max_index = np.argmax(res)
+
+            res = res.tolist()[0]
+            confidence = res[max_index]
+
+            if confidence > 0.5:
+                print(NAMES[max_index], ":", res[max_index])
+            else:
+                print(f"Unknown, closest is: {NAMES[max_index]} : {res[max_index]}")
+
+        except ValueError:
+            print("ValueError")
 
 
 if __name__ == "__main__":
-    models = train()
-    test(models)
+    try:
+        testing_model = load_model('smart_assistant/recognition/face/models/face_model.h5')
+        load_unique_names()
+    except OSError:
+        testing_model = train()
+
+    test(testing_model)

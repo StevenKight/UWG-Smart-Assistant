@@ -37,8 +37,7 @@ setup(
                     'smart_assistant.conversation.uwg': ['Events.json',
                                                         'students.txt'],
                     'smart_assistant.recognition.face.models': ['data.csv',
-                                                                'Encodings',
-                                                                'Encodings_Names'],
+                                                                '*.txt'],
                     'smart_assistant.recognition.face.models.Dlib': ['*.dat'],
                     'smart_assistant.recognition.audio.Models': ['audio_model.h5',
                                                                     '*.csv']}
