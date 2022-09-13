@@ -12,7 +12,7 @@ E0401 disabeled because of importing recognition encoder error
 
 import numpy as np
 from keras.models import Sequential
-from keras.layers import Dense, Input
+from keras.layers import Dense
 import cv2
 import pandas as pd
 
@@ -22,6 +22,9 @@ __author__ = "Steven Kight"
 __version__ = "1.2"
 __pylint__ = "2.14.4"
 
+NAMES = None
+
+
 def get_known_info():
     """
     Imports known encodings and names.
@@ -29,6 +32,8 @@ def get_known_info():
     ### Return
         A list of all encodings and a dictionary with names as keys and encodings as values.
     """
+
+    global NAMES
 
     header = ["0","1","2","3","4","5","6","7","8","9","10","11",
             "12","13","14","15","16","17","18","19","20","21","22",
@@ -50,12 +55,12 @@ def get_known_info():
     labels = dataframe.pop('Name')
     labels.pop(0)
     labels = np.array(labels.values.tolist())
-    unique_labels = np.unique(labels)
+    NAMES = np.unique(labels)
 
     binary_labels = []
-    for name in labels:
-        zeros = np.zeros(len(unique_labels), dtype=int)
-        index = np.where(unique_labels == name)[0][0]
+    for person in labels:
+        zeros = np.zeros(len(NAMES), dtype=int)
+        index = np.where(NAMES == person)[0][0]
         zeros[index] = 1
         binary_labels.append(zeros)
 
@@ -63,8 +68,6 @@ def get_known_info():
     numeric_features = dataframe[header]
     numeric_features = numeric_features.iloc[1: , :]
     numeric_features = numeric_features.values.tolist()
-
-    numeric_features = [np.array(array).T for array in numeric_features]
 
     return numeric_features, binary_labels
 
@@ -79,10 +82,12 @@ def train():
     x_train = np.array(x_train)
     y_train = np.array(y_train)
 
+    size_x = len(x_train[0])
+    size_y = len(y_train[0])
+
     model = Sequential()
-    model.add(Input(shape=np.shape(x_train[0])))
-    model.add(Dense(len(x_train[0]), activation='tanh', name='hidden_layer'))
-    model.add(Dense(units=len(y_train[0]), activation='softmax', name='output_layer'))
+    model.add(Dense(size_x, input_dim=size_x, activation='tanh', name='hidden_layer'))
+    model.add(Dense(units=size_y, activation='softmax', name='output_layer'))
 
     # Compile model
     model.compile(
@@ -90,15 +95,15 @@ def train():
         optimizer='adam',
         metrics=['accuracy']
     )
-    print(f'Input: {model.input_shape}')
-    print("Full shape:" , np.shape(x_train), "Per example shape:" , np.shape(x_train[0]))
-    quit()
 
     print(f'Summary:\n{model.summary()}')
+    print(f'Input: {model.input_shape}')
+    print("Full shape:" , np.shape(x_train), "Per example shape:" , np.shape(x_train[0]))
 
-    EPOCHS = 2
-    history = model.fit(x_train, y_train, epochs=EPOCHS, verbose=1)
+    EPOCHS = 10
+    history = model.fit(x_train, y_train, epochs=EPOCHS, batch_size=1, verbose=1)
     model.save('smart_assistant/recognition/face/models/face_model.h5', history)
+
     return model
 
 
@@ -106,7 +111,7 @@ def run_webcam():
     """
     Runs the webcam until faces are found in the frame
 
-    ### Return
+    #### Return
        A frame containing one or more faces within.
     """
 
@@ -159,11 +164,17 @@ def test(model):
     to predict the person in the frame based on the model.
     """
 
-    data = recognize_person()[0][0]
+    data = recognize_person()[0]
+    data = np.array(data)
 
-    data = np.flip(data, 0)
-    print(np.shape(data))
+    try:
+        res = model.predict(data, batch_size=len(data[0]))
+        max_index = np.argmax(res)
+        print(NAMES[max_index])
+    except ValueError:
+        print("ValueError")
 
-    res = model.predict(data)
 
-    return res
+if __name__ == "__main__":
+    models = train()
+    test(models)
