@@ -22,7 +22,9 @@ def main():
     else:
         people = face.recognize_person()
 
-    conversation.running(people)
+    print(people)
+    #conversation.running(people)
 
 if __name__ == "__main__":
     main()
+    

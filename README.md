@@ -9,17 +9,22 @@ Wolfie is a personal AI system designed for use around the West Georgia campus t
 - Interface
 - Experience
 
-## To code after cloning ([VS Code](https://code.visualstudio.com/)):
+## To use after cloning:
+- It is recommended to create a virtual enviornment for python first.
+- For command line, cd into project folder.
 
-### For Linux/Mac
-    sh packages.sh
-    pip install -r requirements.txt
-  
-## Presentation and Other Resources
+### To install:
+    pip install .
+
+### To Run:
+    wolfie
+
+<br>
+
+## Check Projects Tab above for work that is in progress
+
+<br>
+
+## Additional Research Links
 ### - [Abstract](https://docs.google.com/document/d/1qdX_mmQ2pqs2JabMbmSL3dWtz6Q7pB6P7xGLphXx_9k/edit?usp=sharing)
 ### - [Presentation](https://docs.google.com/presentation/d/1TWBlQ1JnHl5QW7L80rKWLOFsUkJFzI1cYyCgjTL8AG8/edit?usp=sharing)
-
-# TODO:
-- Adjust individual directories according to contained README.md file
-- Pylint all
-- Bring in Conversation

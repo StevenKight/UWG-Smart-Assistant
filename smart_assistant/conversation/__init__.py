@@ -40,6 +40,9 @@ __author__ = "Steven Kight"
 __version__ = "2.0"
 __pylint__ = "2.14.4"
 
+nltk.download('wordnet')
+nltk.download('omw-1.4')
+
 # Sets the word lemmatizer
 LEMMATIZER = WordNetLemmatizer()
 
@@ -173,6 +176,22 @@ def listening():
     return text
 
 
+def speak(output, language):
+    """
+    Creates, runs, then deletes the voice file of the AI.
+
+    :param output: The thing for the AI to say
+    :param language: The language in which to respond
+    """
+    filename = "Voice.mp3"
+
+    myobj = gTTS(text=output, lang=language, slow=False)
+    myobj.save(filename)
+    playsound(filename)
+
+    os.remove(filename)
+
+
 def tasks(inp, people, language):
     """
     Main tasks to be completed using the inputed sentence.
@@ -196,9 +215,8 @@ def tasks(inp, people, language):
             if i['tag'] == tag:
                 response = random.choice(i['responses'])
 
-                myobj = gTTS(text=response, lang=language, slow=False)
-                myobj.save("Voice.mp3")
-                playsound("Voice.mp3")
+                speak(response, language)
+
                 break
 
         return response, True
@@ -212,9 +230,7 @@ def tasks(inp, people, language):
 
                 response = string_response + str(time.strftime("%I:%M %p", time.localtime()))
 
-                myobj = gTTS(text=response, lang=language, slow=False)
-                myobj.save("Voice.mp3")
-                playsound("Voice.mp3")
+                speak(response, language)
 
                 return response, False
 
@@ -227,9 +243,7 @@ def tasks(inp, people, language):
 
                 response = string_response + str(datetime.today().strftime('%Y-%m-%d'))
 
-                myobj = gTTS(text=response, lang=language, slow=False)
-                myobj.save("Voice.mp3")
-                playsound("Voice.mp3")
+                speak(response, language)
 
                 return response, False
 
@@ -245,11 +259,9 @@ def tasks(inp, people, language):
             if i['tag'] == tag:
                 string_response = random.choice(i['responses'])
 
-                response = string_response + str(utils.addlist(numbers))
+                response = string_response + str(utils.add_list(numbers))
 
-                myobj = gTTS(text=response, lang=language, slow=False)
-                myobj.save("Voice.mp3")
-                playsound("Voice.mp3")
+                speak(response, language)
 
                 return response, False
 
@@ -265,11 +277,9 @@ def tasks(inp, people, language):
             if i['tag'] == tag:
                 string_response = random.choice(i['responses'])
 
-                response = string_response + str(utils.multiplylist(numbers))
+                response = string_response + str(utils.multiply_list(numbers))
 
-                myobj = gTTS(text=response, lang=language, slow=False)
-                myobj.save("Voice.mp3")
-                playsound("Voice.mp3")
+                speak(response, language)
 
                 return response, False
 
@@ -285,11 +295,9 @@ def tasks(inp, people, language):
             if i['tag'] == tag:
                 string_response = random.choice(i['responses'])
 
-                response = string_response + str(utils.subtractlist(numbers))
+                response = string_response + str(utils.subtract_list(numbers))
 
-                myobj = gTTS(text=response, lang=language, slow=False)
-                myobj.save("Voice.mp3")
-                playsound("Voice.mp3")
+                speak(response, language)
 
                 return response, False
 
@@ -305,11 +313,9 @@ def tasks(inp, people, language):
             if i['tag'] == tag:
                 string_response = random.choice(i['responses'])
 
-                response = string_response + str(utils.dividelist(numbers))
+                response = string_response + str(utils.divide_list(numbers))
 
-                myobj = gTTS(text=response, lang=language, slow=False)
-                myobj.save("Voice.mp3")
-                playsound("Voice.mp3")
+                speak(response, language)
 
                 return response, False
 
@@ -322,9 +328,7 @@ def tasks(inp, people, language):
 
         response = str(next_word) + "   " + str(split(next_word))
 
-        myobj = gTTS(text=response, lang=language, slow=False)
-        myobj.save("Voice.mp3")
-        playsound("Voice.mp3")
+        speak(response, language)
 
     elif tag == "areofcircle":
         if "radius" in inp:
@@ -333,18 +337,14 @@ def tasks(inp, people, language):
                 if word.isdigit():
                     numbers.append(int(word))
 
-            response = utils.areaofcircle(int(numbers[0]))
+            response = utils.area_of_circle(int(numbers[0]))
 
-            myobj = gTTS(text=response, lang=language, slow=False)
-            myobj.save("Voice.mp3")
-            playsound("Voice.mp3")
+            speak(response, language)
 
         else:
             response = "The formula is pie times the radius squared"
 
-            myobj = gTTS(text=response, lang=language, slow=False)
-            myobj.save("Voice.mp3")
-            playsound("Voice.mp3")
+            speak(response, language)
 
     elif tag == "circumference":
         if "radius" in inp:
@@ -355,16 +355,12 @@ def tasks(inp, people, language):
 
             response = utils.circumfrance(int(numbers[0]))
 
-            myobj = gTTS(text=response, lang=language, slow=False)
-            myobj.save("Voice.mp3")
-            playsound("Voice.mp3")
+            speak(response, language)
 
         else:
             response = "The formula is 2 times pie times the radius"
 
-            myobj = gTTS(text=response, lang=language, slow=False)
-            myobj.save("Voice.mp3")
-            playsound("Voice.mp3")
+            speak(response, language)
 
     elif tag == "time_next_class":
         list_of_intents = INTENTS['intents']
@@ -419,9 +415,7 @@ def tasks(inp, people, language):
                         response = "I do not have any classes for you"
 
                 if response != "":
-                    myobj = gTTS(text=response, lang=language, slow=False)
-                    myobj.save("Voice.mp3")
-                    playsound("Voice.mp3")
+                    speak(response, language)
                 else:
                     print("error")
 
@@ -478,9 +472,7 @@ def tasks(inp, people, language):
                         response = "I do not have any classes for you"
 
                 if response != "":
-                    myobj = gTTS(text=response, lang=language, slow=False)
-                    myobj.save("Voice.mp3")
-                    playsound("Voice.mp3")
+                    speak(response, language)
                 else:
                     print("error")
 
@@ -537,9 +529,7 @@ def tasks(inp, people, language):
                         response = "I do not have any classes for you"
 
                 if response != "":
-                    myobj = gTTS(text=response, lang=language, slow=False)
-                    myobj.save("Voice.mp3")
-                    playsound("Voice.mp3")
+                    speak(response, language)
                 else:
                     print("error")
 
@@ -567,9 +557,7 @@ def tasks(inp, people, language):
                     else:
                         response = "There are no more events today"
 
-                myobj = gTTS(text=response, lang=language, slow=False)
-                myobj.save("Voice.mp3")
-                playsound("Voice.mp3")
+                speak(response, language)
 
                 return response, False
 
@@ -580,9 +568,7 @@ def tasks(inp, people, language):
             if i['tag'] == tag:
                 response = random.choice(i['responses'])
 
-                myobj = gTTS(text=response, lang=language, slow=False)
-                myobj.save("Voice.mp3")
-                playsound("Voice.mp3")
+                speak(response, language)
 
                 return response, False
 
@@ -628,9 +614,7 @@ def chat(people, start=""):
                     if i['tag'] == "greeting":
                         introduction = random.choice(i['responses']).format(names)
 
-                myobj = gTTS(text=introduction, lang=language, slow=False)
-                myobj.save("Voice.mp3")
-                playsound("Voice.mp3")
+                speak(introduction, language)
 
         else:
             _, _ = tasks(start, people, language)
@@ -670,12 +654,10 @@ def running(people):
         inpmain = inpmain.lower()
 
         if "quit" in inpmain:
-            os.remove("Voice.mp3")
-            break
+            quit()
 
         if "wolfie" in inpmain:
             chat(people, inpmain)
-            os.remove("Voice.mp3")
         else:
             pass
 

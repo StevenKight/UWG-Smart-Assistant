@@ -15,7 +15,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.svm import SVC
 
-from smart_assistant.recognition import encoder
+from smart_assistant.recognition.face import encoder
 
 __author__ = "Steven Kight"
 __version__ = "1.0"

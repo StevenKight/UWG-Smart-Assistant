@@ -22,19 +22,19 @@ __pylint__ = "2.14.4"
 
 face_detector = dlib.get_frontal_face_detector()
 
-PREDICTOR_68_POINT_FILE = "Models/Dlib/shape_predictor_68_face_landmarks.dat"
+PREDICTOR_68_POINT_FILE = "models/Dlib/shape_predictor_68_face_landmarks.dat"
 predictor_68_point_model = resource_filename(__name__, PREDICTOR_68_POINT_FILE)
 pose_predictor_68_point = dlib.shape_predictor(predictor_68_point_model)
 
-PREDICTOR_5_POINT_FILE = "Models/Dlib/shape_predictor_5_face_landmarks.dat"
+PREDICTOR_5_POINT_FILE = "models/Dlib/shape_predictor_5_face_landmarks.dat"
 predictor_5_point_model = resource_filename(__name__, PREDICTOR_5_POINT_FILE)
 pose_predictor_5_point = dlib.shape_predictor(predictor_5_point_model)
 
-CNN_DETECTION_FILE = "Models/Dlib/mmod_human_face_detector.dat"
+CNN_DETECTION_FILE = "models/Dlib/mmod_human_face_detector.dat"
 cnn_face_detection_model = resource_filename(__name__, CNN_DETECTION_FILE)
 cnn_face_detector = dlib.cnn_face_detection_model_v1(cnn_face_detection_model)
 
-RECOGNITION_MODEL_FILE = "Models/Dlib/dlib_face_recognition_resnet_model_v1.dat"
+RECOGNITION_MODEL_FILE = "models/Dlib/dlib_face_recognition_resnet_model_v1.dat"
 face_recognition_model = resource_filename(__name__, RECOGNITION_MODEL_FILE)
 face_encoder = dlib.face_recognition_model_v1(face_recognition_model)
 

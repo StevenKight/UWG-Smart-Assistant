@@ -98,7 +98,7 @@ def train():
 
     EPOCHS = 2
     history = model.fit(x_train, y_train, epochs=EPOCHS, verbose=1)
-    #model.save('Research/Audio/Models/audio_model.h5', hist)
+    model.save('smart_assistant/recognition/face/models/face_model.h5', history)
     return model
 
 

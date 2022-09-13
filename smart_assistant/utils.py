@@ -17,7 +17,7 @@ import wave
 import pyaudio
 import cv2
 
-import smart_assistant.recognition.face as recognition
+import recognition.face as recognition
 
 __author__ = "Steven Kight"
 __version__ = "1.0"
