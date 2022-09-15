@@ -51,12 +51,12 @@ def process_data(file_path):
     for row in rows:
         data.append(np.array(row))
 
-    return data, labels
+    return data, labels, names
 
 
 def load_data():
 
-    data, labels = process_data('smart_assistant/research/audio/Models/data.csv')
+    data, labels, _ = process_data('smart_assistant/recognition/audio/Models/data.csv')
 
     # Relation Creation
     training = []
@@ -73,7 +73,7 @@ def load_data():
     return x_train, y_train
 
 def train():
-    x_train, y_train = load_data()
+    x_train, y_train, = load_data()
     x_train = np.array(x_train)
     y_train = np.array(y_train)
     print(f'x_train:\n{x_train}')
@@ -93,23 +93,28 @@ def train():
     )
     print(f'Summary:\n{model.summary()}')
 
-    EPOCHS = 2
-    history = model.fit(X_TRAIN, y_train, epochs=EPOCHS, verbose=1)    
+    EPOCHS = 10
+    history = model.fit(X_TRAIN, y_train, epochs=EPOCHS, batch_size=1, verbose=1)
     #model.save('Research/Audio/Models/audio_model.h5', hist)
     print("Full shape:" , np.shape(X_TRAIN), "Per example shape:" , np.shape(x_train[0]))
     return model
 
 
 def test(model):
-    data, _ = process_data('smart_assistant/research/audio/Models/test.csv')
-    print(f'data[0] {data[0]}')
-    print(np.shape(data[0]))
-    print(data[0])
+    data, _, names = process_data('smart_assistant/recognition/audio/Models/data.csv')
+    print(f"Predict Shape: {np.shape(data[0])}")
 
+    # TODO get prediction from microphone
     prediction_vector = model.predict([[3299.73,227.14,4159.46,18.03,428.79,\
         3272.01,3327.45,427.32,1372.11,4.42,25.58,420.85,433.78]])
-    print(prediction_vector)
-    print(f'index: {np.argmax(prediction_vector)}')
+
+    max_index = np.argmax(prediction_vector)
+    prediction_vector = prediction_vector.tolist()[0]
+
+    if prediction_vector[max_index] > 0.75:
+        print(f'\nIndex: {max_index}, Confidence: {prediction_vector[max_index]}, Name: {names[max_index]}')
+    else:
+        print(f'\nUnknown, Closest is:\nIndex: {max_index}, Confidence: {prediction_vector[max_index]}, Name: {names[max_index]}')
 
 if __name__ == "__main__":
     model = train()
