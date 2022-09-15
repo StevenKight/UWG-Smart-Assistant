@@ -15,12 +15,11 @@ setup(
         ]
     },
     packages=find_packages(),
-    install_requires=['tensorflow==2.7.0',
+    install_requires=['tensorflow==2.8.0',
                         'scikit-learn==1.1.1',
                         'numpy==1.22.0',
                         'pandas==1.4.3',
                         'opencv-python==4.5.5.62',
-                        'keras==2.7.0',
                         'cmake==3.22.1',
                         'nltk==3.6.7',
                         'dlib==19.24.0',
