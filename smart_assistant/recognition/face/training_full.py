@@ -16,6 +16,7 @@ import sys
 import numpy as np
 from keras.models import Sequential, load_model
 from keras.layers import Dense
+import tensorflow as tf
 import cv2
 import pandas as pd
 
@@ -25,8 +26,8 @@ __author__ = "Steven Kight"
 __version__ = "1.2"
 __pylint__ = "2.14.4"
 
+tf.random.set_seed(6)
 NAMES = None
-sys.path.append('smart_assistant')
 
 HEADER = ["0","1","2","3","4","5","6","7","8","9","10","11",
             "12","13","14","15","16","17","18","19","20","21","22",
@@ -107,8 +108,8 @@ def get_known_info():
 
     binary_labels = []
     for person in labels:
-        zeros = np.zeros(len(NAMES), dtype=int)
-        index = np.where(NAMES == person)[0][0]
+        zeros = np.zeros(len(uniques), dtype=int)
+        index = np.where(uniques == person)[0][0]
         zeros[index] = 1
         binary_labels.append(zeros)
 

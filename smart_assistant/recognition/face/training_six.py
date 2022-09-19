@@ -14,6 +14,7 @@ import os
 import numpy as np
 from keras.models import Sequential, load_model
 from keras.layers import Dense
+import tensorflow as tf
 import cv2
 import pandas as pd
 
@@ -23,6 +24,7 @@ __author__ = "Steven Kight"
 __version__ = "1.2"
 __pylint__ = "2.14.4"
 
+tf.random.set_seed(6)
 NAMES = None
 
 HEADER = ["0","1","2","3","4","5","6","7","8","9","10","11",
@@ -147,7 +149,7 @@ def train():
     print(f'Input: {model.input_shape}')
     print("Full shape:" , np.shape(x_train), "Per example shape:" , np.shape(x_train[0]))
 
-    epochs = 10
+    epochs = 25
     history = model.fit(x_train, y_train, epochs=epochs, batch_size=1, verbose=1)
     model.save('smart_assistant/recognition/face/models/face_model_small.h5', history)
 
@@ -225,7 +227,7 @@ def test(test_model):
             res = res.tolist()[0]
             confidence = res[max_index]
 
-            if confidence > 0.5:
+            if confidence > 0.75:
                 print(NAMES[max_index], ":", res[max_index])
             else:
                 print(f"Unknown, closest is: {NAMES[max_index]} : {res[max_index]}")

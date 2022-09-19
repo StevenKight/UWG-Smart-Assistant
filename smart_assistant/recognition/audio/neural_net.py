@@ -9,14 +9,15 @@ import random
 import csv
 
 import numpy as np
-from keras.models import Sequential
+from keras.models import Sequential, load_model
 from keras.layers import Dense
+import tensorflow as tf
 
 __author__ = "Ana Stanescu"
 __version__ = "1.6"
 __pylint__ = "2.14.4"
 
-
+tf.random.set_seed(6)
 X_TRAIN = 'will hold train'
 
 def process_data(file_path):
@@ -80,10 +81,14 @@ def train():
     print(f'x_train:\n{y_train}')
     X_TRAIN = x_train
 
+    nodes_input = len(x_train[0])-1
+    hidden_nodes = len(y_train[0])*2
+    class_count = len(y_train[0])
+
     model = Sequential()
-    model.add(Dense(1, input_dim=len(x_train[0]), activation='tanh', name='hidden_layer'))
-    #model.add(Dense(64, activation='tanh'))
-    model.add(Dense(units=len(y_train[0]), activation='softmax', name='output_layer'))
+    model.add(Dense(nodes_input, input_dim=len(x_train[0]), activation='relu', name='input_layer'))
+    model.add(Dense(hidden_nodes, activation='relu', name='hidden_layer'))
+    model.add(Dense(class_count, activation='softmax', name='output_layer'))
 
     # Compile model
     model.compile(
@@ -93,9 +98,9 @@ def train():
     )
     print(f'Summary:\n{model.summary()}')
 
-    EPOCHS = 10
+    EPOCHS = 50
     history = model.fit(X_TRAIN, y_train, epochs=EPOCHS, batch_size=1, verbose=1)
-    #model.save('Research/Audio/Models/audio_model.h5', hist)
+    model.save('smart_assistant/recognition/audio/Models/audio_model.h5', history)
     print("Full shape:" , np.shape(X_TRAIN), "Per example shape:" , np.shape(x_train[0]))
     return model
 
@@ -117,5 +122,9 @@ def test(model):
         print(f'\nUnknown, Closest is:\nIndex: {max_index}, Confidence: {prediction_vector[max_index]}, Name: {names[max_index]}')
 
 if __name__ == "__main__":
-    model = train()
-    test(model)
+    try:
+        testing_model = load_model('smart_assistant/recognition/audio/Models/audio_model.h5')
+    except OSError:
+        testing_model = train()
+
+    test(testing_model)

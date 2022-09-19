@@ -8,6 +8,7 @@ import csv
 
 import numpy as np
 import pandas as pd
+import tensorflow as tf
 from keras.models import Sequential
 from keras.layers import Dense
 
@@ -15,6 +16,7 @@ __author__ = "Steven Kight"
 __version__ = "1.2"
 __pylint__ = "2.14.4"
 
+tf.random.set_seed(6)
 NAMES = None
 
 HEADER = ["0","1","2","3","4","5","6","7","8","9","10","11",
@@ -142,11 +144,12 @@ def load_data_audio():
             training.append((data[i[0]], labels[i[0]]))
 
     random.shuffle(training)
-    training = np.array(training)
+    training = np.array(training, dtype=object)
 
     x_train = list(training[:, 0])
     y_train = list(training[:, 1])
     print(f"Training data created with {np.shape(x_train[0])} input shape")
+
     return x_train, y_train
 
 
@@ -156,12 +159,14 @@ def proccess_combination_data():
     face_data = tuple(zip(face_x, face_y))
 
     combinations_x = list(itertools.product(audio_x, face_x))
+    combinations_flattened = [list(itertools.chain.from_iterable(combination)) for combination in combinations_x]
+    combinations_flattened = np.array(combinations_flattened)
 
     combinations_y = list(itertools.product(audio_x, face_data))
     labels = [tup[1] for tup in combinations_y]
     labels = [tup[1] for tup in labels]
 
-    return combinations_x, labels
+    return combinations_flattened, labels
 
 
 def train():
@@ -171,6 +176,7 @@ def train():
     """
 
     x_train, y_train = proccess_combination_data()
+
     x_train = np.array(x_train)
     y_train = np.array(y_train)
 
@@ -178,7 +184,7 @@ def train():
     size_y = len(y_train[0])
 
     model = Sequential()
-    model.add(Dense(size_x, input_dim=size_x, activation='tanh', name='hidden_layer'))
+    model.add(Dense(size_x, activation='tanh', name='hidden_layer'))
     model.add(Dense(units=size_y, activation='softmax', name='output_layer'))
 
     # Compile model
@@ -188,17 +194,16 @@ def train():
         metrics=['accuracy']
     )
 
+    epochs = 25
+    history = model.fit(x_train, y_train, epochs=epochs, batch_size=1, verbose=1)
+    model.save('smart_assistant/recognition/models/multimodel_model.h5', history)
+
     print(f'Summary:\n{model.summary()}')
     print(f'Input: {model.input_shape}')
     print("Full shape:" , np.shape(x_train), "Per example shape:" , np.shape(x_train[0]))
 
-    epochs = 10
-    history = model.fit(x_train, y_train, epochs=epochs, batch_size=1, verbose=1)
-    model.save('smart_assistant/recognition/face/models/face_model.h5', history)
-
     return model
 
 if __name__ == "__main__":
-    x, y = proccess_combination_data()
-    print(len(x), len(x[0][0]), len(x[0][1]))
-    print(len(y), len(y[0]))
+
+    trained_model = train()
