@@ -122,9 +122,9 @@ def recognize_person():
                 confidence = res[max_index]
 
                 persons.append((NAMES[max_index], confidence))
-            
+
             return persons
-                
+
 
         # Go through each person recognized
         #for face in face_locations:

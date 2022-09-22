@@ -11,7 +11,6 @@ E0401 disabeled because of importing recognition encoder error
 # pylint: disable=E1101
 
 import os
-import sys
 
 import numpy as np
 from keras.models import Sequential, load_model
