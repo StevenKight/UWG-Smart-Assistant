@@ -29,6 +29,7 @@ import shutil
 import uuid
 from datetime import datetime
 
+from keras.models import load_model
 import numpy as np
 import cv2
 
@@ -37,6 +38,15 @@ from smart_assistant.recognition.face import encoder
 __author__ = "Steven Kight"
 __version__ = "2.0"
 __pylint__ = "2.14.4"
+
+with open("smart_assistant/recognition/face/models/names.txt", "rb") as file:
+    lines = file.read()
+    NAMES = str(lines)
+    NAMES = NAMES[2:len(NAMES)-5].split("\\r\\n")
+    file.close()
+
+MODEL = load_model("smart_assistant/recognition/face/models/face_model.h5")
+
 
 def time():
     """
@@ -49,25 +59,6 @@ def time():
     current_time = now.strftime("%H:%M:%S")
     return "Current Time = " + current_time
 
-def get_known_info():
-    """
-    Imports known encodings and names.
-
-    :return: A list of all encodings and a dictionary with names as keys and encodings as values.
-    """
-    global NAME_ENCODINGS
-    global FACE_ENCODINGS
-
-    # Create arrays of known face encodings and their names
-    with open("smart_assistant/recognition/face/models/Encodings.txt", "rb") as encoded:
-        FACE_ENCODINGS = pickle.load(encoded)
-        encoded.close()
-
-    with open("smart_assistant/recognition/face/models/Encodings_Names.txt", "rb") as encoded_names:
-        NAME_ENCODINGS = pickle.load(encoded_names)
-        encoded_names.close()
-
-    return FACE_ENCODINGS, NAME_ENCODINGS
 
 def run_webcam():
     """
@@ -80,7 +71,7 @@ def run_webcam():
                         "haarcascade_frontalface_default.xml")
 
     # Get a reference to webcam #0 (the default one)
-    video_capture = cv2.VideoCapture(0)
+    video_capture = cv2.VideoCapture(0, cv2.CAP_DSHOW)
 
     while True:
         # Grab a single frame of video
@@ -105,9 +96,9 @@ def recognize_person():
     """
     face_names = []
 
-    get_known_info()
-
+    print(time(), "- Running Webcam")
     face_frame = run_webcam()
+    print(time(), "- After Cam")
 
     # Convert the image from BGR color to RGB color
     rgb_frame = face_frame[:, :, ::-1]
@@ -119,25 +110,21 @@ def recognize_person():
 
             face_encodings = encoder.face_encodings(rgb_frame, [face])
 
-            for face_encoding in face_encodings:
-                # Find the known face with the smallest distance to the new face
-                face_distances = encoder.face_distance(FACE_ENCODINGS, face_encoding)
-                best_match_index = np.argmin(face_distances)
+            np_encodings = np.array(face_encodings)
 
-                match = FACE_ENCODINGS[best_match_index]
+            res = MODEL.predict(np_encodings, batch_size=len(np_encodings[0]))
 
-                # Go through dictionary with each face and the name of the directory
-                for key in NAME_ENCODINGS.keys():
+            persons = []
+            for result in res:
+                max_index = np.argmax(result)
 
-                    # Get the list of encodings associated with that person
-                    values = NAME_ENCODINGS.get(key)
-                    # Cycle through each encoding
-                    for value in values:
-                        # Check if it is the same as the match and if it is save the key
-                        if np.array_equal(value, match):
-                            name_key = key
+                res = res.tolist()[0]
+                confidence = res[max_index]
 
-                face_names.append(name_key)
+                persons.append((NAMES[max_index], confidence))
+            
+            return persons
+                
 
         # Go through each person recognized
         #for face in face_locations:
@@ -173,15 +160,12 @@ if __name__ == "__main__":
 
     print(time(), "- Start")
     names = recognize_person()
-    print(time(), "- Finish")
+    print(time(), "- Finish \n")
 
-    INTRODUCTION = ""
-    for index, name in enumerate(names):
-        if index == 0:
-            INTRODUCTION += "Hello " + name
+    for name, conf in names:
+        if conf > 0.4:
+            print(name, ":", conf)
+        elif conf > 0.1 and conf < 0.2:
+            print(f"This is more than likely an image of {name} : {conf}")
         else:
-            INTRODUCTION += " and " + name
-
-    print(INTRODUCTION)
-
-    #new_encodings.encode_directorys()
+            print(f"Unknown, closest is: {name} : {conf}")
