@@ -94,8 +94,7 @@ def recognize_person():
 
     :return: A list of the name of all persons within the cameras view.
     """
-    face_names = []
-
+    
     print(time(), "- Running Webcam")
     face_frame = run_webcam()
     print(time(), "- After Cam")
@@ -106,31 +105,27 @@ def recognize_person():
     face_locations = encoder.face_locations_frame(face_frame)
 
     if len(face_locations):
-        for face in face_locations:
+        face_encodings = [encoder.face_encodings(rgb_frame, [face]) for face in face_locations]
 
-            face_encodings = encoder.face_encodings(rgb_frame, [face])
+        np_encodings = np.array(face_encodings)
 
-            np_encodings = np.array(face_encodings)
+        res = MODEL.predict(np_encodings, batch_size=len(np_encodings[0]))
 
-            res = MODEL.predict(np_encodings, batch_size=len(np_encodings[0]))
+        persons = []
+        for result in res:
+            max_index = np.argmax(result)
 
-            persons = []
-            for result in res:
-                max_index = np.argmax(result)
+            res = res.tolist()[0]
+            confidence = res[max_index]
 
-                res = res.tolist()[0]
-                confidence = res[max_index]
+            persons.append((NAMES[max_index], confidence))
 
-                persons.append((NAMES[max_index], confidence))
-
-            return persons
+        return persons
 
 
         # Go through each person recognized
         #for face in face_locations:
         #    save_new_image(face_frame, face, name_key)
-
-        return face_names
 
 def save_new_image(image, points, img_name):
     """

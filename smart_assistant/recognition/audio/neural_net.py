@@ -11,6 +11,7 @@ import csv
 import numpy as np
 from keras.models import Sequential, load_model
 from keras.layers import Dense
+from sklearn.model_selection import LeaveOneOut
 import tensorflow as tf
 
 __author__ = "Ana Stanescu"
@@ -18,7 +19,6 @@ __version__ = "1.6"
 __pylint__ = "2.14.4"
 
 tf.random.set_seed(6)
-X_TRAIN = 'will hold train'
 
 def process_data(file_path):
     rows = []
@@ -70,16 +70,16 @@ def load_data():
 
     x_train = list(training[:, 0])
     y_train = list(training[:, 1])
+
     print(f"Training data created with {np.shape(x_train[0])} input shape")
     return x_train, y_train
 
 def train():
-    x_train, y_train, = load_data()
+    x_train, y_train = load_data()
     x_train = np.array(x_train)
     y_train = np.array(y_train)
     print(f'x_train:\n{x_train}')
     print(f'x_train:\n{y_train}')
-    X_TRAIN = x_train
 
     nodes_input = len(x_train[0])-1
     hidden_nodes = len(y_train[0])*2
@@ -99,9 +99,24 @@ def train():
     print(f'Summary:\n{model.summary()}')
 
     EPOCHS = 50
-    history = model.fit(X_TRAIN, y_train, epochs=EPOCHS, batch_size=1, verbose=1)
+
+    loov = LeaveOneOut()
+
+    test_data = [[],[]]
+    for train_index, test_index in loov.split(x_train):
+        train_X, test_X = x_train[train_index], x_train[test_index]
+        train_Y, test_Y = y_train[train_index], y_train[test_index]
+
+        history = model.fit(train_X, train_Y, epochs=EPOCHS, batch_size=1, verbose=1)
+
+        test_loss, test_acc = model.evaluate(test_X, test_Y)
+        test_data[0].append(test_acc)
+        test_data[1].append(test_loss)
+
+    print('\nTest accuracy:', test_data[0], '\nTest loss:', test_data[1])
+
     model.save('smart_assistant/recognition/audio/Models/audio_model.h5', history)
-    print("Full shape:" , np.shape(X_TRAIN), "Per example shape:" , np.shape(x_train[0]))
+    print("Full shape:" , np.shape(x_train), "Per example shape:" , np.shape(x_train[0]))
     return model
 
 

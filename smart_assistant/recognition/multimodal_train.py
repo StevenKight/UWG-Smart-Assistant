@@ -194,7 +194,7 @@ def train():
         metrics=['accuracy']
     )
 
-    epochs = 25
+    epochs = 5
     history = model.fit(x_train, y_train, epochs=epochs, batch_size=1, verbose=1)
     model.save('smart_assistant/recognition/models/multimodel_model.h5', history)
 

@@ -12,7 +12,6 @@ W0601 disabled because global variables are necessary
 
 import csv
 import os
-import pickle
 from datetime import datetime
 
 import numpy as np
@@ -112,13 +111,6 @@ def save(names_encodings):
     """
     Saves the encodings and the dictionary of known names and encodings.
     """
-
-    # Save the encodings created to their own files
-    with open("smart_assistant/recognition/face/models/Encodings.txt", "wb") as encoded:
-        pickle.dump(FACE_ENCODINGS, encoded)
-
-    with open("smart_assistant/recognition/face/models/Encodings_Names.txt", "wb") as encoded_names:
-        pickle.dump(names_encodings, encoded_names)
 
     labels = []
     for key in list(names_encodings.keys()):
