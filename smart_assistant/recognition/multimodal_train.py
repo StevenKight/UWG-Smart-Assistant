@@ -11,6 +11,7 @@ import pandas as pd
 import tensorflow as tf
 from keras.models import Sequential
 from keras.layers import Dense
+from sklearn.model_selection import LeaveOneOut
 
 __author__ = "Steven Kight"
 __version__ = "1.2"
@@ -194,8 +195,22 @@ def train():
         metrics=['accuracy']
     )
 
-    epochs = 5
-    history = model.fit(x_train, y_train, epochs=epochs, batch_size=1, verbose=1)
+    EPOCHS = 5
+    loov = LeaveOneOut()
+
+    test_data = [[],[]]
+    for train_index, test_index in loov.split(x_train):
+        train_X, test_X = x_train[train_index], x_train[test_index]
+        train_Y, test_Y = y_train[train_index], y_train[test_index]
+
+        history = model.fit(train_X, train_Y, epochs=EPOCHS, batch_size=1, verbose=1)
+
+        test_loss, test_acc = model.evaluate(test_X, test_Y)
+        test_data[0].append(test_acc)
+        test_data[1].append(test_loss)
+
+    print('\nTest accuracy:', test_data[0], '\nTest loss:', test_data[1])
+
     model.save('smart_assistant/recognition/models/multimodel_model.h5', history)
 
     print(f'Summary:\n{model.summary()}')

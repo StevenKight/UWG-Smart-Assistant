@@ -154,7 +154,6 @@ def train():
     EPOCHS = 25
     loov = LeaveOneOut()
 
-    test_data = [[],[]]
     for train_index, test_index in loov.split(x_train):
         train_X, test_X = x_train[train_index], x_train[test_index]
         train_Y, test_Y = y_train[train_index], y_train[test_index]
@@ -162,10 +161,8 @@ def train():
         history = model.fit(train_X, train_Y, epochs=EPOCHS, batch_size=1, verbose=1)
 
         test_loss, test_acc = model.evaluate(test_X, test_Y)
-        test_data[0].append(test_acc)
-        test_data[1].append(test_loss)
 
-    print('\nTest accuracy:', test_data[0], '\nTest loss:', test_data[1])
+        print('\nTest accuracy:', test_acc, '\nTest loss:', test_loss)
 
     model.save('smart_assistant/recognition/face/models/face_model_small.h5', history)
 
