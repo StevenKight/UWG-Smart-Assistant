@@ -39,13 +39,15 @@ __author__ = "Steven Kight"
 __version__ = "2.0"
 __pylint__ = "2.14.4"
 
-with open("smart_assistant/recognition/face/models/names.txt", "rb") as file:
+current_directory = str(os.getcwd()).replace("\\.venv\\Scripts", "")
+
+with open(f'{current_directory}\\smart_assistant/recognition/face/models/names.txt', "rb") as file:
     lines = file.read()
     NAMES = str(lines)
     NAMES = NAMES[2:len(NAMES)-5].split("\\r\\n")
     file.close()
 
-MODEL = load_model("smart_assistant/recognition/face/models/face_model.h5")
+MODEL = load_model(f'{current_directory}\\smart_assistant/recognition/face/models/face_model.h5')
 
 
 def time():

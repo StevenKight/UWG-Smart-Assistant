@@ -46,14 +46,16 @@ nltk.download('omw-1.4')
 # Sets the word lemmatizer
 LEMMATIZER = WordNetLemmatizer()
 
+current_directory = str(os.getcwd()).replace("\\.venv\\Scripts", "")
+
 # Loads pre trained model and parts
-MODEL = load_model('smart_assistant/conversation/models/chatbot_model.h5')
+MODEL = load_model(f'{current_directory}\\smart_assistant/conversation/models/chatbot_model.h5')
 
-INTENTS = json.load(open('smart_assistant/conversation/models/intents.json', encoding='UTF-8'))
-WORDS = pickle.load(open('smart_assistant/conversation/models/words.pkl', 'rb'))
-CLASSES = pickle.load(open('smart_assistant/conversation/models/classes.pkl', 'rb'))
+INTENTS = json.load(open(f'{current_directory}\\smart_assistant/conversation/models/intents.json', encoding='UTF-8'))
+WORDS = pickle.load(open(f'{current_directory}\\smart_assistant/conversation/models/words.pkl', 'rb'))
+CLASSES = pickle.load(open(f'{current_directory}\\smart_assistant/conversation/models/classes.pkl', 'rb'))
 
-LIST_EVENTS = json.load(open('smart_assistant/conversation/uwg/Events.json', encoding='UTF-8'))
+LIST_EVENTS = json.load(open(f'{current_directory}\\smart_assistant/conversation/uwg/Events.json', encoding='UTF-8'))
 
 # Get students files from UWG
 CUR_DIR = os.getcwd()
@@ -63,7 +65,7 @@ PATH = os.path.join(CUR_DIR, 'Dataset')
 LIST_OF_STUDENTS = []
 
 # open file and read the content in a list
-with open('smart_assistant/conversation/uwg/students.txt', 'r', encoding='UTF-8') as filehandle:
+with open(f'{current_directory}\\smart_assistant/conversation/uwg/students.txt', 'r', encoding='UTF-8') as filehandle:
     for line in filehandle:
         # remove linebreak which is the last character of the string
         currentPlace = line[:-1]
@@ -585,9 +587,9 @@ def chat(people, start=""):
     language = 'en'
 
     if start != "":
-        start_tag = chatbot_response(start)[0]
+        start_tag = chatbot_response(start)
 
-        if start_tag == 'greeting':
+        if start_tag == 'offensive':
             # Possibly structure a specialized name introduction
             introduction = ""
 
@@ -656,7 +658,7 @@ def running(people):
         if "quit" in inpmain:
             quit()
 
-        if "wolfie" in inpmain:
+        if "april" in inpmain:
             chat(people, inpmain)
         else:
             pass

@@ -61,7 +61,7 @@
        },
        {"tag": "offensive",
         "patterns": ["fuck", "damn", "ass", "dick", "bastard", "cock"],
-        "responses": ["Excuse me?", "Language", "I don't want to respond to that", "I can understand you you know"],
+        "responses": ["Hey {}, how are you", "Good to see you again {}", "Hi there {}, how can I help", "Hey {}, how can I help"],
         "context_set": ""
        },
        {"tag": "response",
