@@ -39,15 +39,15 @@ __author__ = "Steven Kight"
 __version__ = "2.0"
 __pylint__ = "2.14.4"
 
-current_directory = str(os.getcwd()).replace("\\.venv\\Scripts", "")
+current_directory = str(os.getcwd()).replace("/.venv/Scripts", "")
 
-with open(f'{current_directory}\\smart_assistant/recognition/face/models/names.txt', "rb") as file:
+with open(f'{current_directory}/smart_assistant/recognition/face/models/names.txt', "rb") as file:
     lines = file.read()
     NAMES = str(lines)
-    NAMES = NAMES[2:len(NAMES)-5].split("\\r\\n")
+    NAMES = NAMES[2:len(NAMES)-5].split("\\n")
     file.close()
 
-MODEL = load_model(f'{current_directory}\\smart_assistant/recognition/face/models/face_model.h5')
+MODEL = load_model(f'{current_directory}/smart_assistant/recognition/face/models/face_model.h5')
 
 
 def time():
@@ -73,13 +73,14 @@ def run_webcam():
                         "haarcascade_frontalface_default.xml")
 
     # Get a reference to webcam #0 (the default one)
-    video_capture = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+    video_capture = cv2.VideoCapture(0)
 
     while True:
         # Grab a single frame of video
-        frame = video_capture.read()[1]
+        _, frame = video_capture.read()
 
-        face_frame = encoder.face_locations_frame(frame)
+        rgb_frame = frame[:, :, ::-1]
+        face_frame = encoder.face_locations_frame(rgb_frame)
 
         if len(face_frame):
             break
@@ -97,9 +98,7 @@ def recognize_person():
     :return: A list of the name of all persons within the cameras view.
     """
     
-    print(time(), "- Running Webcam")
     face_frame = run_webcam()
-    print(time(), "- After Cam")
 
     # Convert the image from BGR color to RGB color
     rgb_frame = face_frame[:, :, ::-1]
@@ -111,14 +110,13 @@ def recognize_person():
 
         np_encodings = np.array(face_encodings)
 
-        res = MODEL.predict(np_encodings, batch_size=len(np_encodings[0]))
+        res = [MODEL.predict(encoding, batch_size=len(np_encodings[0])) for encoding in np_encodings]
 
         persons = []
         for result in res:
             max_index = np.argmax(result)
 
-            res = res.tolist()[0]
-            confidence = res[max_index]
+            confidence = result[0][max_index]
 
             persons.append((NAMES[max_index], confidence))
 

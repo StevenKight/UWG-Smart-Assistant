@@ -95,7 +95,6 @@ def _raw_face_landmarks(face_image, face_locations=None, model="small"):
         face_locations = [_css_to_rect(face_location) for face_location in face_locations]
 
     pose_predictor = pose_predictor_68_point
-
     if model == "small":
         pose_predictor = pose_predictor_5_point
 

@@ -33,7 +33,7 @@ def data_processing():
     words = []
     classes = []
     documents = []
-    data_file = open('smart_assistant/conversation/models/intents.json', encoding='UTF-8').read()
+    data_file = open('smart_assistant/conversation/tasks/models/intents.json', encoding='UTF-8').read()
     intents = json.loads(data_file)
 
     for intent in intents['intents']:
@@ -58,8 +58,8 @@ def data_processing():
 
     print(len(words), "unique lemmatized words")
 
-    pickle.dump(words, open('smart_assistant/conversation/models/words.pkl', 'wb'))
-    pickle.dump(classes, open('smart_assistant/conversation/models/classes.pkl', 'wb'))
+    pickle.dump(words, open('smart_assistant/conversation/tasks/models/words.pkl', 'wb'))
+    pickle.dump(classes, open('smart_assistant/conversation/tasks/models/classes.pkl', 'wb'))
 
     training = []
 
@@ -118,7 +118,7 @@ def train_model():
 
     epochs = 100
     history = model.fit(train_x, train_y, epochs=epochs, batch_size=5, verbose=1)
-    model.save('smart_assistant/conversation/models/chatbot_model.h5', history)
+    model.save('smart_assistant/conversation/tasks/models/chatbot_model.h5', history)
 
     print("model created")
 
