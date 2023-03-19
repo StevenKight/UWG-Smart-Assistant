@@ -225,7 +225,7 @@ def tasks(inp, people, language):
     :param people: The people saying the inputed sentence
     :param language: The language in which to respond
     """
-    # TODO Reduce this method
+    # TODO Refactor this method
 
     if "quit" in inp.lower():
         quit()

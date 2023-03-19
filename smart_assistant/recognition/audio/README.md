@@ -10,9 +10,3 @@ sound. The phrases are listed below in order:
 3. "Hey Siri"
 4. "Hey Siri, how is the weather today?"
 5. "Hey Siri, it's me."
-
-## TODO:
-- Create Neural Network instead of binary
-- Set up __init__.py file
-- clean up the directory as a whole
-- pylint everything

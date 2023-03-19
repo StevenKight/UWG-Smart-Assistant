@@ -1,18 +1,29 @@
 import nltk
 
-def check(input):
+def grammar_check(input):
     wrong_syntax=1
-    sent_split = input.split()
+    # sent_split = input.split()
 
-    rd_parser = nltk.RecursiveDescentParser(nltk.data.load('Research/Language/Grammar/english_grammer.cfg'))
-    for tree_struc in rd_parser.parse(sent_split):
-        s = tree_struc
+    text = nltk.word_tokenize(input)
+
+    tagged = nltk.pos_tag(text)
+    print(tagged)
+    tags = [tag[1] for tag in tagged]
+
+    rd_parser = nltk.RecursiveDescentParser(nltk.data.load('smart_assistant/conversation/research/Grammar/english_grammer.cfg'))
+
+    for _ in rd_parser.parse(tags):
         wrong_syntax=0
-        print("Correct Grammer !!!")
+
     if wrong_syntax==1:
-        print("Wrong Grammer!!!!")
+        return False
+    
+    return True
 
 if __name__ == "__main__":
-    text_input = "the good child walked happily "
-    
-    check(text_input)
+    text_input = "the good dog walked fast"
+
+    if grammar_check(text_input):
+        print("Correct Syntax")
+    else:
+        print("Wrong Syntax")
