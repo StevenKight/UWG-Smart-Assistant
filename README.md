@@ -1,13 +1,14 @@
 # Wolfie
-Wolfie is a personal AI system designed for use around the West Georgia campus to aid students in their daily lives while attending the university.
+Wolfie is a personal AI system designed for use around the West Georgia campus and beyond to aid students in their daily lives while attending the university.
 
+<!-- 
 ## Wolfie stands for:
 - West Georgia
 - Oriented
 - Looped
 - Faculty
 - Interface
-- Experience
+- Experience -->
 
 ## To use after cloning:
 - It is recommended to create a virtual enviornment for python first.
@@ -21,7 +22,14 @@ Wolfie is a personal AI system designed for use around the West Georgia campus t
 
 <br>
 
-## Check Projects Tab above for work that is in progress
+## In progress:
+### - [Speaker Recognition](smart_assistant/recognition/audio)
+- Needs to be able to access microphone. [Here](smart_assistant/recognition/audio/__init__.py)
+- Detect when microphone is available
+### - [Research into response generation](smart_assistant/conversation/research)
+- [Sentence building](smart_assistant/conversation/research/Sentence_Building)
+- [Grammar](smart_assistant/conversation/research/Grammar)
+- Word choice (context based)
 
 <br>
 

@@ -14,7 +14,7 @@ from keras.layers import Dense
 from sklearn.model_selection import LeaveOneOut
 import tensorflow as tf
 
-__author__ = "Ana Stanescu"
+__author__ = "Ana Stanescu and Steven Kight"
 __version__ = "1.6"
 __pylint__ = "2.14.4"
 
